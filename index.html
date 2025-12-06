@@ -30,6 +30,7 @@
             background: var(--surface); padding: 15px 20px; border-radius: 10px; 
             box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; 
             margin-bottom: 20px; border-bottom: 3px solid var(--primary);
+            flex-wrap: wrap; gap: 15px; /* Responsive Header */
         }
         h1 { margin: 0; font-size: 1.4rem; color: var(--primary-dark); display: flex; align-items: center; gap: 10px; }
         
@@ -38,7 +39,8 @@
         .btn { 
             border: 1px solid var(--border); background: var(--surface); color: var(--text); 
             padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: 500; 
-            transition: 0.2s; display: flex; align-items: center; gap: 8px; font-size: 13px;
+            transition: 0.2s; display: flex; align-items: center; gap: 8px; font-size: 13px; font-family: inherit;
+            white-space: nowrap; /* Giữ chữ không bị xuống dòng trong nút */
         }
         .btn svg { width: 16px; height: 16px; fill: var(--icon-color); }
         .btn:hover { border-color: var(--primary); background: #f0f9ff; color: var(--primary); }
@@ -69,64 +71,59 @@
 
         /* Card */
         .card { background: var(--surface); border-radius: 10px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .sem-title { border: none; font-size: 1.1rem; font-weight: 700; color: var(--primary-dark); width: 250px; background: transparent; }
-        .sem-stats { display: flex; gap: 15px; font-size: 0.85rem; color: #64748b; background: #f1f5f9; padding: 4px 12px; border-radius: 20px; }
+        
+        /* Card Header Responsive Fix */
+        .card-header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px; 
+            flex-wrap: wrap; gap: 10px; /* Cho phép xuống dòng trên mobile */
+        }
+        
+        .sem-title { 
+            border: none; font-size: 1.1rem; font-weight: 700; color: var(--primary-dark); 
+            background: transparent; 
+            width: auto; flex-grow: 1; min-width: 200px; /* Linh hoạt chiều rộng */
+        }
+        
+        .sem-stats { 
+            display: flex; gap: 10px; font-size: 0.85rem; color: #64748b; 
+            background: #f1f5f9; padding: 6px 12px; border-radius: 20px; 
+            flex-wrap: wrap; /* Cho phép các chỉ số xuống dòng nếu cần */
+        }
+        .sem-stats span { white-space: nowrap; } /* Giữ từng cụm chỉ số liền nhau */
 
-        /* --- TABLE & INPUT FIX --- */
-        .table-responsive { overflow-x: auto; }
+        /* Table & Inputs */
+        .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; } /* Scroll mượt trên iOS */
         table { width: 100%; border-collapse: collapse; min-width: 800px; }
         
-        /* Cố định chiều cao dòng để input fill đầy */
         td { 
-            padding: 0; /* Xóa padding của TD để input tràn viền */
+            padding: 0; 
             border: 1px solid #e2e8f0; 
             text-align: center; 
             vertical-align: middle; 
-            height: 36px; /* Chiều cao cố định */
+            height: 36px; 
             position: relative;
         }
         th { text-align: center; background: #f8fafc; padding: 10px; font-weight: 600; font-size: 0.8rem; color: #475569; border: 1px solid #e2e8f0; }
 
-        /* Input style mới: Tràn viền, không border */
         input.cell-input, select.cell-input { 
-            width: 100%; 
-            height: 100%; 
-            border: none; 
-            padding: 0 5px; /* Padding nhẹ bên trong text */
-            text-align: center; 
-            font-family: inherit; 
-            background: transparent; 
-            font-weight: 500;
-            display: block;
-            box-sizing: border-box;
+            width: 100%; height: 100%; border: none; padding: 0 5px; 
+            text-align: center; font-family: inherit; background: transparent; 
+            font-weight: 500; display: block; box-sizing: border-box;
         }
-        
         input.cell-input:hover, select.cell-input:hover { background: #f8fafc; }
-        
         input.cell-input:focus, select.cell-input:focus { 
-            outline: 2px solid var(--primary); 
-            background: white; 
-            z-index: 10; 
-            position: relative; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            outline: 2px solid var(--primary); background: white; z-index: 10; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        /* Highlight Row Animation */
-        @keyframes flashHighlight {
-            0% { background-color: #fde047; }
-            100% { background-color: transparent; }
-        }
+        /* Animation */
+        @keyframes flashHighlight { 0% { background-color: #fde047; } 100% { background-color: transparent; } }
         .highlight-row { animation: flashHighlight 2s ease-out; }
 
         /* Colors */
-        .g-A { color: var(--grade-A); }
-        .g-B { color: var(--grade-B); }
-        .g-C { color: var(--grade-C); }
-        .g-D { color: var(--grade-D); }
-        .g-F { color: var(--grade-F); }
+        .g-A { color: var(--grade-A); } .g-B { color: var(--grade-B); } .g-C { color: var(--grade-C); } .g-D { color: var(--grade-D); } .g-F { color: var(--grade-F); }
 
-        /* Modals */
+        /* Modal System */
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center;
@@ -139,37 +136,63 @@
             max-height: 90vh; display: flex; flex-direction: column;
         }
         .modal-overlay.open .modal { transform: translateY(0); }
-        .btn-close-modal {
-            position: absolute; top: 15px; right: 20px;
-            border: none; background: none; font-size: 1.5rem; cursor: pointer; color: #94a3b8;
-        }
+        .btn-close-modal { position: absolute; top: 15px; right: 20px; border: none; background: none; font-size: 1.5rem; cursor: pointer; color: #94a3b8; }
         .btn-close-modal:hover { color: #ef4444; }
 
-        /* Code Block Style */
+        /* Confirm/Alert Modal Specifics */
+        .modal-mini { width: 400px; text-align: center; }
+        .modal-icon { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; }
+        .icon-warn { background: #fee2e2; fill: #ef4444; }
+        .icon-success { background: #dcfce7; fill: #22c55e; }
+        .icon-info { background: #e0f2fe; fill: #0ea5e9; }
+        
+        .modal-actions { margin-top: 20px; display: flex; justify-content: center; gap: 15px; }
+        .btn-confirm-yes { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn-confirm-no { background: #e2e8f0; color: #475569; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        .btn-ok { background: #0ea5e9; color: white; border: none; padding: 10px 30px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+
+        /* Code Block */
         .code-container {
             background: #1e293b; color: #e2e8f0; padding: 15px; 
             border-radius: 8px; font-family: 'Consolas', monospace; font-size: 12px;
             overflow-y: auto; height: 300px; margin: 15px 0;
-            white-space: pre-wrap; word-break: break-all;
-            text-align: left;
-            border: 1px solid #334155;
+            white-space: pre-wrap; word-break: break-all; text-align: left; border: 1px solid #334155;
         }
 
-        /* Delete Modal */
-        .btn-confirm-del { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
-        .btn-cancel-del { background: #e2e8f0; color: #475569; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
-
         .hidden { display: none; }
-        .btn-add-row { width: 100%; margin-top: 10px; padding: 8px; border: 1px dashed #cbd5e1; color: #64748b; background: #f8fafc; border-radius: 6px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px; }
+        .btn-add-row { 
+            width: 100%; margin-top: 10px; padding: 8px; 
+            border: 1px dashed #cbd5e1; color: #64748b; background: #f8fafc; 
+            border-radius: 6px; cursor: pointer; display: flex; justify-content: center; 
+            align-items: center; gap: 5px; font-family: inherit; font-size: 13.5px;
+        }
         .btn-add-row:hover { border-color: var(--primary); color: var(--primary); background: #f0f9ff; }
         .btn-add-row svg { fill: currentColor; width: 14px; height: 14px; }
+
+        /* --- MOBILE RESPONSIVE TWEAKS --- */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            header { flex-direction: column; align-items: stretch; text-align: center; }
+            h1 { justify-content: center; margin-bottom: 10px; }
+            .controls { justify-content: center; }
+            .btn { flex: 1; justify-content: center; }
+            
+            /* Chuyển Summary Bar thành 2 cột trên điện thoại */
+            .summary-bar { grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
+            .sum-item div:last-child { font-size: 1.2rem; }
+
+            /* Card Header trên mobile */
+            .card-header { align-items: flex-start; }
+            .sem-title { width: 100%; margin-bottom: 5px; }
+            .sem-stats { width: 100%; justify-content: space-between; font-size: 0.75rem; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>GPA Manager</h1>
+        <h1>GPA</h1>
         <div class="controls">
             <input type="file" id="jsonInput" accept=".json" style="display:none">
             
@@ -178,7 +201,7 @@
                 Mở File
             </button>
             
-            <button class="btn" onclick="closeFile()">
+            <button class="btn" onclick="closeFileRequest()">
                 <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
                 Đóng File
             </button>
@@ -188,14 +211,14 @@
                 Lưu
             </button>
             
-            <button class="btn btn-primary" onclick="showSuggestions()">
-                <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 0 1 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg>
-                Phân tích
-            </button>
-
-            <button class="btn btn-code" onclick="showScriptModal()">
+            <button class="btn" onclick="showScriptModal()">
                 <svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
                 Script lấy điểm
+            </button>
+
+            <button class="btn btn-primary" onclick="showSuggestions()">
+                <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 0 1 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg>
+                Cải thiện
             </button>
         </div>
     </header>
@@ -230,48 +253,25 @@
 <div class="modal-overlay" id="scriptModal">
     <div class="modal">
         <button class="btn-close-modal" onclick="closeScriptModal()">&times;</button>
-        <h2 style="margin:0; font-size:1.3rem; color:var(--primary-dark)">💻 Script Lấy Điểm</h2>
+        <h2 style="margin:0; font-size:1.3rem; color:var(--primary-dark)">Script lấy điểm</h2>
         <p style="color:#64748b; font-size:0.9rem; margin-top:5px;">Copy đoạn code dưới đây và dán vào Console (F12) tại trang điểm để tải file JSON.</p>
-        
         <div class="code-container" id="jsCodeBlock">
 (function() {
-    const GPA_SCALE = {
-        'A': 4.0, 'B': 3.0, 'C': 2.0, 'D': 1.0, 'F': 0.0,
-        null: 0.0
-    };
-
+    const GPA_SCALE = { 'A': 4.0, 'B': 3.0, 'C': 2.0, 'D': 1.0, 'F': 0.0, null: 0.0 };
     function scoreToLetterGrade(score) {
         if (score === null || score < 4.0) return 'F';
-        if (score >= 8.5) return 'A';
-        if (score >= 7.0) return 'B';
-        if (score >= 5.5) return 'C';
-        if (score >= 4.0) return 'D';
-        return 'F';
+        if (score >= 8.5) return 'A'; if (score >= 7.0) return 'B';
+        if (score >= 5.5) return 'C'; if (score >= 4.0) return 'D'; return 'F';
     }
-
     const scoreTableBody = $('.x_content .table-responsive table tbody');
-    if (scoreTableBody.length === 0) {
-        console.error("Không tìm thấy bảng điểm chi tiết.");
-        return;
-    }
-
+    if (scoreTableBody.length === 0) { console.error("Không tìm thấy bảng điểm."); return; }
     const resultData = {};
-    let currentAcademicYear = null;
-    let currentSemester = null;
+    let currentAcademicYear = null; let currentSemester = null;
 
     function parseSemesterString(headerText) {
         const parts = headerText.trim().split(' - ');
-        if (parts.length === 2) {
-            return {
-                semester: parts[0].trim(),
-                academicYear: parts[1].trim()
-            };
-        } else if (headerText.includes("Học kỳ riêng - Quy đổi")) {
-            return {
-                semester: "Học kỳ riêng",
-                academicYear: "Quy đổi"
-            };
-        }
+        if (parts.length === 2) return { semester: parts[0].trim(), academicYear: parts[1].trim() };
+        else if (headerText.includes("Học kỳ riêng - Quy đổi")) return { semester: "Học kỳ riêng", academicYear: "Quy đổi" };
         return { semester: headerText.trim(), academicYear: "Không rõ" };
     }
 
@@ -281,85 +281,40 @@
         if (semesterHeader.length > 0) {
             const fullHeader = semesterHeader.text().trim().replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ');
             const parsed = parseSemesterString(fullHeader);
-            currentSemester = parsed.semester;
-            currentAcademicYear = parsed.academicYear;
-            
-            if (currentAcademicYear === "Quy đổi") {
-                console.log(`Bỏ qua Học kỳ: ${currentSemester} - ${currentAcademicYear}`);
-                currentSemester = null; 
-                return; 
-            }
-            
-            if (!resultData[currentAcademicYear]) {
-                resultData[currentAcademicYear] = {};
-            }
-            if (!resultData[currentAcademicYear][currentSemester]) {
-                resultData[currentAcademicYear][currentSemester] = [];
-            }
-            return; 
+            currentSemester = parsed.semester; currentAcademicYear = parsed.academicYear;
+            if (currentAcademicYear === "Quy đổi") { currentSemester = null; return; }
+            if (!resultData[currentAcademicYear]) resultData[currentAcademicYear] = {};
+            if (!resultData[currentAcademicYear][currentSemester]) resultData[currentAcademicYear][currentSemester] = [];
+            return;
         }
-
         const columns = row.find('td');
         if (columns.length >= 10 && currentSemester && currentAcademicYear && currentAcademicYear !== "Quy đổi") {
-            const stt = $(columns[0]).attr('title') || $(columns[0]).text().trim(); 
-            const tenLHP = $(columns[1]).text().trim()
-                            .replace(/[\r\n\t]+/g, '')
-                            .replace(/\s{2,}/g, ' ')
-                            .replace(/(\s*(?:\[Image of.*\]\s*))/g, '')
-                            .replace(/\s*(\u2713|\u2714|\u2611|\u2714\uFE0F|\u2713\uFE0F|glyphicon-ok|glyphicon-inbox|Đánh giá sự cần thiết của Học phần)/g, '')
-                            .replace(/^(Lớp đồ án|Đồ án cơ sở) \d+ \w+\s*/, '')
-                            .trim();
-
-            const soTC = $(columns[2]).text().trim();
-            const lanHoc = $(columns[3]).text().trim();
-            const diemCC = $(columns[4]).text().trim().replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ');
-            const diemBT = $(columns[5]).text().trim().replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ');
-            const diemGK = $(columns[6]).text().trim().replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ');
-            const diemCK = $(columns[7]).text().trim().replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ');
-            const diemT10 = $(columns[8]).text().trim().replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ');
-            
-            const safeParseFloat = (str) => {
-                const num = parseFloat(str);
-                return isNaN(num) ? null : num;
-            };
-
+            const stt = $(columns[0]).attr('title') || $(columns[0]).text().trim();
+            const tenLHP = $(columns[1]).text().trim().replace(/[\r\n\t]+/g,'').replace(/\s{2,}/g,' ').replace(/(\s*(?:\[Image of.*\]\s*))/g,'').replace(/\s*(\u2713|\u2714|\u2611|\u2714\uFE0F|\u2713\uFE0F|glyphicon-ok|glyphicon-inbox|Đánh giá sự cần thiết của Học phần)/g,'').replace(/^(Lớp đồ án|Đồ án cơ sở) \d+ \w+\s*/,'').trim();
+            const soTC = $(columns[2]).text().trim(); const lanHoc = $(columns[3]).text().trim();
+            const diemCC = $(columns[4]).text().trim(); const diemBT = $(columns[5]).text().trim();
+            const diemGK = $(columns[6]).text().trim(); const diemCK = $(columns[7]).text().trim();
+            const diemT10 = $(columns[8]).text().trim();
+            const safeParseFloat = (str) => { const num = parseFloat(str); return isNaN(num) ? null : num; };
             const finalScore10 = safeParseFloat(diemT10);
             const finalLetter = scoreToLetterGrade(finalScore10);
             const finalScore4 = finalLetter !== null ? GPA_SCALE[finalLetter] : null;
 
-            const subjectData = {
-                "STT_ID": stt.length > 0 ? stt : null,
-                "TenLopHocPhan": tenLHP,
-                "SoTinChi": parseInt(soTC) || null,
-                "LanHoc": parseInt(lanHoc) || null,
-                "DiemThanhPhan": {
-                    "ChuyenCan_GVHD": safeParseFloat(diemCC),
-                    "BaiTap": safeParseFloat(diemBT),
-                    "GiuaKy": safeParseFloat(diemGK),
-                    "CuoiKy_DoAn": safeParseFloat(diemCK),
-                },
-                "DiemTongKet": {
-                    "He10": finalScore10,
-                    "He4": finalScore4,
-                    "DiemChu": finalLetter
-                }
-            };
-            resultData[currentAcademicYear][currentSemester].push(subjectData);
+            resultData[currentAcademicYear][currentSemester].push({
+                "STT_ID": stt.length > 0 ? stt : null, "TenLopHocPhan": tenLHP,
+                "SoTinChi": parseInt(soTC)||null, "LanHoc": parseInt(lanHoc)||null,
+                "DiemThanhPhan": { "ChuyenCan_GVHD": safeParseFloat(diemCC), "BaiTap": safeParseFloat(diemBT), "GiuaKy": safeParseFloat(diemGK), "CuoiKy_DoAn": safeParseFloat(diemCK) },
+                "DiemTongKet": { "He10": finalScore10, "He4": finalScore4, "DiemChu": finalLetter }
+            });
         }
     });
-
     const jsonOutput = JSON.stringify(resultData, null, 2);
-    console.log("Dữ liệu điểm đã được trích xuất thành công.");
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(jsonOutput);
     const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "DiemSinhVien_VKU_Export.json");
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    document.body.removeChild(downloadAnchorNode);
+    downloadAnchorNode.setAttribute("href", dataStr); downloadAnchorNode.setAttribute("download", "DiemSinhVien_VKU_Export.json");
+    document.body.appendChild(downloadAnchorNode); downloadAnchorNode.click(); document.body.removeChild(downloadAnchorNode);
 })();
         </div>
-
         <button onclick="copyToClipboard()" class="btn btn-primary" style="justify-content:center; padding:12px;">
             <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
             Copy Code
@@ -371,7 +326,7 @@
     <div class="modal">
         <button class="btn-close-modal" onclick="closeSuggestions()">&times;</button>
         <div style="margin-bottom:15px;">
-            <h2 style="margin:0; font-size:1.3rem; color:var(--primary-dark)">🎯 Gợi ý Cải thiện điểm</h2>
+            <h2 style="margin:0; font-size:1.3rem; color:var(--primary-dark)">Gợi ý cải thiện</h2>
         </div>
         <div style="background:#f1f5f9; padding:15px; border-radius:8px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center">
             <div>
@@ -384,45 +339,79 @@
     </div>
 </div>
 
-<div class="modal-overlay" id="deleteModal">
-    <div class="modal" style="width: 400px;">
-        <button class="btn-close-modal" onclick="closeDeleteModal()">&times;</button>
-        <div style="text-align:center">
-            <div style="background:#fee2e2; width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 15px auto;">
-                <svg viewBox="0 0 24 24" style="fill:#ef4444; width:30px; height:30px;"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-            </div>
-            <h3 style="margin:0 0 10px 0; color:#1e293b;">Xác nhận xóa</h3>
-            <p style="color:#64748b; margin:0;">Bạn có chắc chắn muốn xóa toàn bộ học kỳ này?<br>Hành động này không thể hoàn tác.</p>
-            <div style="margin-top:20px; display:flex; justify-content:center; gap:15px;">
-                <button class="btn-cancel-del" onclick="closeDeleteModal()">Hủy bỏ</button>
-                <button class="btn-confirm-del" onclick="confirmDelete()">Đồng ý xóa</button>
-            </div>
+<div class="modal-overlay" id="confirmModal">
+    <div class="modal modal-mini">
+        <div class="modal-icon icon-warn" id="confirmIcon">
+            <svg viewBox="0 0 24 24" style="width:30px; height:30px;"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+        </div>
+        <h3 style="margin:0 0 10px 0; color:#1e293b;" id="confirmTitle">Xác nhận</h3>
+        <p style="color:#64748b; margin:0;" id="confirmMsg">Nội dung xác nhận</p>
+        <div class="modal-actions" id="confirmActions">
         </div>
     </div>
 </div>
 
 <script>
     let semesters = [];
-    let pendingDeleteId = null; 
+    let onConfirmAction = null; 
     
+    // --- UTILS: MODAL SYSTEM ---
+    function showMessage(title, msg, type = 'success') {
+        const modal = document.getElementById('confirmModal');
+        const icon = document.getElementById('confirmIcon');
+        const titleEl = document.getElementById('confirmTitle');
+        const msgEl = document.getElementById('confirmMsg');
+        const actions = document.getElementById('confirmActions');
+        
+        titleEl.textContent = title;
+        msgEl.textContent = msg;
+        
+        icon.className = 'modal-icon';
+        if(type==='success') { icon.classList.add('icon-success'); icon.innerHTML = '<svg viewBox="0 0 24 24" style="width:30px; height:30px;"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>'; }
+        else if(type==='info') { icon.classList.add('icon-info'); icon.innerHTML = '<svg viewBox="0 0 24 24" style="width:30px; height:30px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>'; }
+        else { icon.classList.add('icon-warn'); icon.innerHTML = '<svg viewBox="0 0 24 24" style="width:30px; height:30px;"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>'; }
+        
+        actions.innerHTML = `<button class="btn-ok" onclick="closeConfirmModal()">OK</button>`;
+        modal.classList.add('open');
+    }
+
+    function showConfirm(title, msg, onYes) {
+        const modal = document.getElementById('confirmModal');
+        const icon = document.getElementById('confirmIcon');
+        document.getElementById('confirmTitle').textContent = title;
+        document.getElementById('confirmMsg').textContent = msg;
+        
+        icon.className = 'modal-icon icon-warn';
+        icon.innerHTML = '<svg viewBox="0 0 24 24" style="width:30px; height:30px;"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>';
+
+        const actions = document.getElementById('confirmActions');
+        actions.innerHTML = `
+            <button class="btn-confirm-no" onclick="closeConfirmModal()">Hủy bỏ</button>
+            <button class="btn-confirm-yes" onclick="executeConfirm()">Đồng ý</button>
+        `;
+        onConfirmAction = onYes;
+        modal.classList.add('open');
+    }
+
+    function closeConfirmModal() { document.getElementById('confirmModal').classList.remove('open'); onConfirmAction = null; }
+    function executeConfirm() { if(onConfirmAction) onConfirmAction(); closeConfirmModal(); }
+
     // --- MAIN LOGIC ---
     function initEmpty() {
         semesters = [{ id: genId(), name: '2024-2025 - Học kỳ 1', subjects: [] }];
         render();
     }
     
-    // Đóng file: Reset về mảng rỗng và render lại
-    function closeFile() {
-        if(confirm("Bạn có chắc chắn muốn đóng file? Dữ liệu chưa lưu sẽ bị mất.")) {
+    function closeFileRequest() {
+        showConfirm("Đóng File hiện tại?", "Dữ liệu chưa lưu sẽ bị mất. Bạn có chắc chắn muốn đóng file?", () => {
             semesters = [];
             render();
-            // Cập nhật summary về 0
             document.getElementById('sum-gpa4').textContent = "0.00";
             document.getElementById('sum-gpa10').textContent = "0.00";
             document.getElementById('sum-tc').textContent = "0";
             document.getElementById('sum-count').textContent = "0";
             document.getElementById('semester-container').innerHTML = '<div style="text-align:center; padding:40px; color:#94a3b8">Chưa có dữ liệu. Vui lòng Mở File JSON hoặc Thêm học kỳ mới.</div>';
-        }
+        });
     }
 
     document.getElementById('jsonInput').addEventListener('change', e => {
@@ -432,13 +421,9 @@
         reader.onload = ev => {
             try {
                 const imported = JSON.parse(ev.target.result);
-                if(Array.isArray(imported)) {
-                    semesters = imported;
-                } else {
-                    processLegacyImport(imported);
-                }
+                if(Array.isArray(imported)) { semesters = imported; } else { processLegacyImport(imported); }
                 render();
-            } catch (err) { alert('File lỗi!'); }
+            } catch (err) { showMessage("Lỗi", "File không hợp lệ hoặc bị lỗi định dạng!", "error"); }
         };
         reader.readAsText(file);
     });
@@ -450,14 +435,10 @@
             for (const sem in data[year]) {
                 const isSummer = sem.toLowerCase().includes('hè');
                 const subList = data[year][sem].map(s => ({
-                    id: genId(),
-                    name: s.TenLopHocPhan,
-                    tc: s.SoTinChi,
+                    id: genId(), name: s.TenLopHocPhan, tc: s.SoTinChi,
                     type: (s.LoaiMon === 'cai_thien' || s.LanHoc > 1) ? 'improve' : 'new',
-                    cc: s.DiemThanhPhan?.ChuyenCan_GVHD || '',
-                    bt: s.DiemThanhPhan?.BaiTap || '',
-                    gk: s.DiemThanhPhan?.GiuaKy || '',
-                    ck: s.DiemThanhPhan?.CuoiKy_DoAn || '',
+                    cc: s.DiemThanhPhan?.ChuyenCan_GVHD || '', bt: s.DiemThanhPhan?.BaiTap || '',
+                    gk: s.DiemThanhPhan?.GiuaKy || '', ck: s.DiemThanhPhan?.CuoiKy_DoAn || '',
                     score10: s.DiemTongKet.He10
                 }));
 
@@ -472,22 +453,24 @@
         for(const year in summerBuffer) {
             const hk2Name = `${year} - Học kỳ 2`;
             const hk2 = semesters.find(s => s.name === hk2Name);
-            if(hk2) { hk2.subjects.push(...summerBuffer[year]); } 
-            else { semesters.push({ id: genId(), name: hk2Name, subjects: summerBuffer[year] }); }
+            if(hk2) { 
+                hk2.subjects.push(...summerBuffer[year]);
+                if (!hk2.name.includes("Học kỳ hè")) { hk2.name += " (và Học kỳ hè)"; }
+            } else { 
+                semesters.push({ id: genId(), name: `${year} - Học kỳ hè`, subjects: summerBuffer[year] }); 
+            }
         }
         semesters.sort((a,b) => a.name.localeCompare(b.name));
     }
 
     function saveData() {
-        if(semesters.length === 0) { alert("Không có dữ liệu để lưu!"); return; }
+        if(semesters.length === 0) { showMessage("Thông báo", "Không có dữ liệu để lưu!", "info"); return; }
         const dataStr = JSON.stringify(semesters, null, 2);
         const blob = new Blob([dataStr], {type: "application/json"});
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        a.href = url;
-        a.download = "bang-diem-gpa.json";
-        a.click();
-        URL.revokeObjectURL(url);
+        a.href = url; a.download = "bang-diem-gpa.json"; a.click(); URL.revokeObjectURL(url);
+        showMessage("Thành công", "File JSON đã được tải xuống!", "success");
     }
 
     function calculate() {
@@ -495,9 +478,7 @@
         semesters.forEach(sem => {
             sem.subjects.forEach(sub => {
                 if (sub.score10 !== null && sub.score10 !== "" && sub.tc > 0) {
-                    const s10 = parseFloat(sub.score10);
-                    const letter = scoreToLetter(s10);
-                    const s4 = letterTo4(letter);
+                    const s10 = parseFloat(sub.score10); const letter = scoreToLetter(s10); const s4 = letterTo4(letter);
                     const key = sub.name.trim().toLowerCase() + '_' + sub.tc;
                     if (!unique[key] || s4 > unique[key].s4 || (s4 === unique[key].s4 && s10 > unique[key].s10)) {
                         unique[key] = { ...sub, s10, s4, letter, semName: sem.name, semId: sem.id }; 
@@ -505,144 +486,67 @@
                 }
             });
         });
-        let totalTC = 0, totalP4 = 0, totalP10 = 0, count = 0;
-        let list = [];
+        let totalTC = 0, totalP4 = 0, totalP10 = 0, count = 0, list = [];
         for (let key in unique) {
-            const s = unique[key];
-            totalTC += s.tc;
-            totalP4 += s.s4 * s.tc;
-            totalP10 += s.s10 * s.tc;
-            count++;
-            list.push(s);
+            const s = unique[key]; totalTC += s.tc; totalP4 += s.s4 * s.tc; totalP10 += s.s10 * s.tc; count++; list.push(s);
         }
         return { gpa4: totalTC ? (totalP4/totalTC) : 0, gpa10: totalTC ? (totalP10/totalTC) : 0, tc: totalTC, count: count, list: list };
     }
 
     function calculateSemStats(sem) {
-        let tc = 0, p10 = 0, p4 = 0, countCalculated = 0;
+        let tc = 0, p10 = 0, p4 = 0, countCalculated = 0, totalTC = 0;
         sem.subjects.forEach(sub => {
+             // Tính tổng TC của kỳ (kể cả chưa có điểm)
+             if(sub.tc) totalTC += sub.tc;
+
              if (sub.score10 !== null && sub.score10 !== "" && sub.tc > 0) {
-                 const s10 = parseFloat(sub.score10);
-                 const s4 = letterTo4(scoreToLetter(s10));
-                 tc += sub.tc;
-                 p10 += s10 * sub.tc;
-                 p4 += s4 * sub.tc;
-                 countCalculated++;
+                 const s10 = parseFloat(sub.score10); const s4 = letterTo4(scoreToLetter(s10));
+                 tc += sub.tc; p10 += s10 * sub.tc; p4 += s4 * sub.tc; countCalculated++;
              }
         });
-        return {
+        return { 
             totalSubjects: sem.subjects.length, 
-            countCalc: countCalculated,
-            gpa10: tc ? (p10/tc).toFixed(2) : "0.00",
-            gpa4: tc ? (p4/tc).toFixed(2) : "0.00"
+            totalTC: totalTC,
+            gpa10: tc ? (p10/tc).toFixed(2) : "0.00", 
+            gpa4: tc ? (p4/tc).toFixed(2) : "0.00" 
         };
     }
 
     function autoCalcScore(sub) {
-        const cc = parseFloat(sub.cc);
-        const bt = parseFloat(sub.bt);
-        const gk = parseFloat(sub.gk);
-        const ck = parseFloat(sub.ck);
-        if (!isNaN(cc) && !isNaN(bt) && !isNaN(gk) && !isNaN(ck)) {
-            const total = (cc * 0.1) + (bt * 0.2) + (gk * 0.2) + (ck * 0.5);
-            sub.score10 = Math.round(total * 10) / 10;
-        }
+        const cc = parseFloat(sub.cc); const bt = parseFloat(sub.bt); const gk = parseFloat(sub.gk); const ck = parseFloat(sub.ck);
+        if (!isNaN(cc) && !isNaN(bt) && !isNaN(gk) && !isNaN(ck)) { sub.score10 = Math.round(((cc*0.1)+(bt*0.2)+(gk*0.2)+(ck*0.5))*10)/10; }
     }
-
-    function scoreToLetter(s) {
-        if (s === null || s === "") return "";
-        s = parseFloat(s);
-        if (s >= 8.5) return 'A';
-        if (s >= 7.0) return 'B';
-        if (s >= 5.5) return 'C';
-        if (s >= 4.0) return 'D';
-        return 'F';
-    }
-    function letterTo4(l) { return { 'A':4, 'B':3, 'C':2, 'D':1, 'F':0 }[l] ?? 0; }
+    function scoreToLetter(s) { if(s===null||s==="")return""; s=parseFloat(s); if(s>=8.5)return'A'; if(s>=7.0)return'B'; if(s>=5.5)return'C'; if(s>=4.0)return'D'; return'F'; }
+    function letterTo4(l) { return {'A':4,'B':3,'C':2,'D':1,'F':0}[l]??0; }
     function genId() { return Math.random().toString(36).substr(2, 9); }
 
     function render() {
-        const container = document.getElementById('semester-container');
-        container.innerHTML = '';
+        const container = document.getElementById('semester-container'); container.innerHTML = '';
         if(semesters.length === 0) return;
-
         semesters.forEach(sem => {
             const stats = calculateSemStats(sem);
-            const card = document.createElement('div');
-            card.className = 'card';
-            
+            const card = document.createElement('div'); card.className = 'card';
             let html = `
                 <div class="card-header">
-                    <div style="display:flex; align-items:center; gap:10px;">
+                    <div style="display:flex; align-items:center; gap:10px; flex-grow: 1;">
                         <input class="sem-title" value="${sem.name}" onchange="updateSem('${sem.id}', this.value)">
-                        <button class="btn btn-danger" onclick="openDeleteModal('${sem.id}')" title="Xóa kỳ này">
-                            <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-                        </button>
+                        <button class="btn btn-danger" onclick="openDeleteModal('${sem.id}')" title="Xóa kỳ này"><svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg></button>
                     </div>
                     <div class="sem-stats">
-                        <span>Số môn: <b>${stats.totalSubjects}</b></span> 
-                        <span style="border-left:1px solid #cbd5e1; padding-left:10px">GPA 10: <b>${stats.gpa10}</b></span>
+                        <span>Số môn: <b>${stats.totalSubjects}</b></span>
+                        <span style="border-left:1px solid #cbd5e1; padding-left:10px">TC: <b>${stats.totalTC}</b></span>
+                        <span style="border-left:1px solid #cbd5e1; padding-left:10px">GPA 10: <b>${stats.gpa10}</b></span> 
                         <span style="border-left:1px solid #cbd5e1; padding-left:10px">GPA 4: <b style="color:var(--primary-dark)">${stats.gpa4}</b></span>
                     </div>
                 </div>
-                <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width:25%; text-align:left">Tên môn học</th>
-                            <th style="width:50px">TC</th>
-                            <th style="width:100px">Loại</th>
-                            <th style="width:50px">CC</th>
-                            <th style="width:50px">BT</th>
-                            <th style="width:50px">GK</th>
-                            <th style="width:50px">CK</th>
-                            <th style="width:70px; background:#eff6ff">Tổng(10)</th>
-                            <th style="width:50px">Chữ</th>
-                            <th style="width:40px"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
+                <div class="table-responsive"><table><thead><tr><th style="width:25%; text-align:left">Tên môn học</th><th style="width:50px">TC</th><th style="width:100px">Loại</th><th style="width:50px">CC</th><th style="width:50px">BT</th><th style="width:50px">GK</th><th style="width:50px">CK</th><th style="width:70px; background:#eff6ff">Tổng(10)</th><th style="width:50px">Chữ</th><th style="width:40px"></th></tr></thead><tbody>`;
             sem.subjects.forEach(sub => {
                 const letter = scoreToLetter(sub.score10);
-                const colorClass = `g-${letter}`;
-                
-                html += `
-                    <tr id="row-${sub.id}">
-                        <td style="text-align:left"><input type="text" class="cell-input" style="text-align:left" value="${sub.name}" onchange="upd('${sem.id}','${sub.id}','name',this.value)"></td>
-                        <td><input type="number" class="cell-input" value="${sub.tc}" onchange="upd('${sem.id}','${sub.id}','tc',this.value)"></td>
-                        <td>
-                            <select class="cell-input" onchange="upd('${sem.id}','${sub.id}','type',this.value)">
-                                <option value="new" ${sub.type==='new'?'selected':''}>Học mới</option>
-                                <option value="improve" ${sub.type==='improve'?'selected':''}>Cải thiện</option>
-                            </select>
-                        </td>
-                        <td><input type="number" step="0.1" class="cell-input" value="${sub.cc||''}" onchange="upd('${sem.id}','${sub.id}','cc',this.value)"></td>
-                        <td><input type="number" step="0.1" class="cell-input" value="${sub.bt||''}" onchange="upd('${sem.id}','${sub.id}','bt',this.value)"></td>
-                        <td><input type="number" step="0.1" class="cell-input" value="${sub.gk||''}" onchange="upd('${sem.id}','${sub.id}','gk',this.value)"></td>
-                        <td><input type="number" step="0.1" class="cell-input" value="${sub.ck||''}" onchange="upd('${sem.id}','${sub.id}','ck',this.value)"></td>
-                        
-                        <td style="background:#eff6ff">
-                            <input type="number" step="0.1" class="cell-input" value="${sub.score10!==null?sub.score10:''}" 
-                                id="score-${sub.id}"
-                                style="font-weight:bold; color:var(--primary-dark)" 
-                                onchange="upd('${sem.id}','${sub.id}','score10',this.value)">
-                        </td>
-                        <td class="${colorClass}" style="font-weight:bold">${letter}</td>
-                        <td><button style="border:none; background:none; cursor:pointer; color:#94a3b8" onclick="delSub('${sem.id}','${sub.id}')">✕</button></td>
-                    </tr>
-                `;
+                html += `<tr id="row-${sub.id}"><td style="text-align:left"><input type="text" class="cell-input" style="text-align:left" value="${sub.name}" onchange="upd('${sem.id}','${sub.id}','name',this.value)"></td><td><input type="number" class="cell-input" value="${sub.tc}" onchange="upd('${sem.id}','${sub.id}','tc',this.value)"></td><td><select class="cell-input" onchange="upd('${sem.id}','${sub.id}','type',this.value)"><option value="new" ${sub.type==='new'?'selected':''}>Học mới</option><option value="improve" ${sub.type==='improve'?'selected':''}>Cải thiện</option></select></td><td><input type="number" step="0.1" class="cell-input" value="${sub.cc||''}" onchange="upd('${sem.id}','${sub.id}','cc',this.value)"></td><td><input type="number" step="0.1" class="cell-input" value="${sub.bt||''}" onchange="upd('${sem.id}','${sub.id}','bt',this.value)"></td><td><input type="number" step="0.1" class="cell-input" value="${sub.gk||''}" onchange="upd('${sem.id}','${sub.id}','gk',this.value)"></td><td><input type="number" step="0.1" class="cell-input" value="${sub.ck||''}" onchange="upd('${sem.id}','${sub.id}','ck',this.value)"></td><td style="background:#eff6ff"><input type="number" step="0.1" class="cell-input" value="${sub.score10!==null?sub.score10:''}" id="score-${sub.id}" style="font-weight:bold; color:var(--primary-dark)" onchange="upd('${sem.id}','${sub.id}','score10',this.value)"></td><td class="g-${letter}" style="font-weight:bold">${letter}</td><td><button style="border:none; background:none; cursor:pointer; color:#94a3b8" onclick="delSub('${sem.id}','${sub.id}')">✕</button></td></tr>`;
             });
-
-            html += `</tbody></table></div>`;
-            html += `<button class="btn-add-row" onclick="addSub('${sem.id}')">
-                <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> Thêm môn học
-            </button>`;
-            card.innerHTML = html;
-            container.appendChild(card);
+            html += `</tbody></table></div><button class="btn-add-row" onclick="addSub('${sem.id}')"><svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> Thêm môn học</button>`;
+            card.innerHTML = html; container.appendChild(card);
         });
-
         const stats = calculate();
         document.getElementById('sum-gpa4').textContent = stats.gpa4.toFixed(2);
         document.getElementById('sum-gpa10').textContent = stats.gpa10.toFixed(2);
@@ -650,15 +554,8 @@
         document.getElementById('sum-count').textContent = stats.count;
     }
 
-    // --- ACTIONS ---
-    function addSemester() {
-        semesters.push({ id: genId(), name: 'Kỳ mới', subjects: [] });
-        render();
-    }
-    function openDeleteModal(id) { pendingDeleteId = id; document.getElementById('deleteModal').classList.add('open'); }
-    function closeDeleteModal() { document.getElementById('deleteModal').classList.remove('open'); pendingDeleteId = null; }
-    function confirmDelete() { if(pendingDeleteId) { semesters = semesters.filter(s => s.id !== pendingDeleteId); render(); closeDeleteModal(); } }
-
+    function addSemester() { semesters.push({ id: genId(), name: 'Kỳ mới', subjects: [] }); render(); }
+    function openDeleteModal(id) { showConfirm("Xác nhận xóa", "Bạn có chắc chắn muốn xóa toàn bộ học kỳ này?", () => { semesters = semesters.filter(s => s.id !== id); render(); }); }
     function updateSem(id, val) { semesters.find(s=>s.id===id).name = val; }
     function addSub(semId) { semesters.find(s=>s.id===semId).subjects.push({ id: genId(), name: 'Môn mới', tc: 3, type: 'new', score10: null }); render(); }
     function delSub(semId, subId) { const sem = semesters.find(s=>s.id===semId); sem.subjects = sem.subjects.filter(s=>s.id!==subId); render(); }
@@ -676,9 +573,7 @@
     function closeScriptModal() { document.getElementById('scriptModal').classList.remove('open'); }
     function copyToClipboard() {
         const code = document.getElementById('jsCodeBlock').innerText;
-        navigator.clipboard.writeText(code).then(() => {
-            alert("Đã copy script vào bộ nhớ tạm!");
-        }, () => { alert("Copy thất bại!"); });
+        navigator.clipboard.writeText(code).then(() => { showMessage("Thành công", "Đã copy script vào bộ nhớ tạm!", "success"); }, () => { showMessage("Lỗi", "Copy thất bại, vui lòng copy thủ công.", "error"); });
     }
 
     // --- SUGGESTIONS ---
@@ -690,23 +585,17 @@
         if(row) {
             row.scrollIntoView({ behavior: 'smooth', block: 'center' });
             row.classList.remove('highlight-row'); void row.offsetWidth; row.classList.add('highlight-row');
-            const input = document.getElementById('score-' + id);
-            if(input) input.focus();
+            const input = document.getElementById('score-' + id); if(input) input.focus();
         }
     }
     function renderSuggestionContent() {
-        const stats = calculate();
-        const target = parseFloat(document.getElementById('targetGPA').value) || 3.2;
-        const currentScore = stats.gpa4 * stats.tc;
-        const targetScore = target * stats.tc;
-        const deficit = targetScore - currentScore;
-        const container = document.getElementById('suggestion-list');
-        const statusDiv = document.getElementById('target-status');
+        const stats = calculate(); const target = parseFloat(document.getElementById('targetGPA').value) || 3.2;
+        const deficit = (target * stats.tc) - (stats.gpa4 * stats.tc);
+        const container = document.getElementById('suggestion-list'); const statusDiv = document.getElementById('target-status');
 
         if (deficit <= 0) {
             statusDiv.innerHTML = `<span style="color:var(--grade-A)">Đã đạt mục tiêu!</span>`;
-            container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--grade-A); font-weight:600">🎉 Xuất sắc! Bạn đã đạt GPA mục tiêu.</div>`;
-            return;
+            container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--grade-A); font-weight:600">Xuất sắc! Bạn đã đạt GPA mục tiêu.</div>`; return;
         }
         statusDiv.innerHTML = `<span style="color:var(--grade-F)">Thiếu <b>${deficit.toFixed(2)}</b> điểm hệ 4</span>`;
         let candidates = stats.list.filter(s => s.s4 < 4).map(s => ({ ...s, gain: (4 - s.s4) * s.tc })).sort((a, b) => b.gain - a.gain);
@@ -715,17 +604,7 @@
         if(candidates.length === 0) { html = `<div style="padding:10px; text-align:center">Không còn môn nào khả thi để cải thiện.</div>`; } 
         else {
             candidates.slice(0, 8).forEach(s => {
-                html += `
-                    <div style="padding:12px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center">
-                        <div>
-                            <div style="font-weight:600; color:var(--text)">${s.name} <span style="font-weight:normal; font-size:0.9em; color:#64748b">(${s.tc} TC)</span></div>
-                            <div style="font-size:0.8rem; color:#64748b">Hiện tại: <b class="g-${s.letter}">${s.letter}</b> (${s.semName})</div>
-                        </div>
-                        <div style="display:flex; align-items:center; gap:15px">
-                            <div style="color:var(--grade-A); font-size:0.9rem; font-weight:600">+ ${s.gain.toFixed(2)}</div>
-                            <button onclick="jumpTo('${s.id}')" style="background:white; border:1px solid var(--primary); color:var(--primary); padding:4px 10px; border-radius:4px; font-size:12px; cursor:pointer;">Sửa</button>
-                        </div>
-                    </div>`;
+                html += `<div style="padding:12px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center"><div><div style="font-weight:600; color:var(--text)">${s.name} <span style="font-weight:normal; font-size:0.9em; color:#64748b">(${s.tc} TC)</span></div><div style="font-size:0.8rem; color:#64748b">Hiện tại: <b class="g-${s.letter}">${s.letter}</b> (${s.semName})</div></div><div style="display:flex; align-items:center; gap:15px"><div style="color:var(--grade-A); font-size:0.9rem; font-weight:600">+ ${s.gain.toFixed(2)}</div><button onclick="jumpTo('${s.id}')" style="background:white; border:1px solid var(--primary); color:var(--primary); padding:4px 10px; border-radius:4px; font-size:12px; cursor:pointer;">Sửa</button></div></div>`;
             });
         }
         container.innerHTML = html;
