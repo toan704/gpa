@@ -193,6 +193,30 @@
         footer a { color: var(--primary); text-decoration: none; font-weight: 500; }
         footer a:hover { text-decoration: underline; }
 
+        /* --- TOAST NOTIFICATION STYLES --- */
+        #toast-container {
+            position: fixed; top: 20px; right: 20px; z-index: 2000;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .toast-notification {
+            background: #ffffff; color: var(--text); padding: 12px 18px; border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15); border-left: 5px solid var(--primary);
+            display: flex; align-items: center; gap: 12px; min-width: 250px;
+            animation: slideInRight 0.3s ease-out, fadeOut 0.3s ease-in 2.7s forwards;
+            font-size: 0.9rem;
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
+        }
+        .toast-icon-wrapper {
+            width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 12px; flex-shrink: 0;
+        }
+
         @media (max-width: 768px) {
             body { padding: 10px; }
             header { flex-direction: column; align-items: stretch; text-align: center; }
@@ -204,6 +228,8 @@
             .card-header { align-items: flex-start; }
             .sem-title { width: 100%; margin-bottom: 5px; }
             .sem-stats { width: 100%; justify-content: space-between; font-size: 0.75rem; }
+            #toast-container { right: 10px; left: 10px; top: 10px; }
+            .toast-notification { width: auto; }
         }
     </style>
 </head>
@@ -272,6 +298,8 @@
 <footer>
     Liên hệ: <a href="https://fb.com/toan704" target="_blank">Facebook</a>
 </footer>
+
+<div id="toast-container"></div>
 
 <div class="modal-overlay" id="scriptModal">
     <div class="modal">
@@ -444,6 +472,43 @@
     let onConfirmAction = null; 
     let currentTuitionSemId = null;
     let defaultTuitionPrice = 500000;
+    
+    // --- BIẾN TOÀN CỤC ĐỂ LƯU GPA CŨ ---
+    let lastGpaValue = null;
+
+    // --- HÀM HIỂN THỊ TOAST GÓC PHẢI ---
+    function showToast(message, type = 'default') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast-notification';
+        
+        let iconHtml = '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>';
+        let borderColor = '#0ea5e9';
+        let bgIcon = '#e0f2fe';
+        let colorIcon = '#0ea5e9';
+
+        if (message.includes('Tăng')) {
+            borderColor = '#22c55e'; bgIcon = '#dcfce7'; colorIcon = '#22c55e';
+            iconHtml = '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>';
+        } else if (message.includes('Giảm')) {
+            borderColor = '#ef4444'; bgIcon = '#fee2e2'; colorIcon = '#ef4444';
+            iconHtml = '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor"><path d="M16 18l2.29-2.29-4.88-4.88-4 4L2 7.41 3.41 6l6 6 4-4 6.3 6.29L22 12v6z"/></svg>';
+        }
+
+        toast.style.borderLeftColor = borderColor;
+        toast.innerHTML = `
+            <div class="toast-icon-wrapper" style="background:${bgIcon}; color:${colorIcon}">
+                ${iconHtml}
+            </div>
+            <div>${message}</div>
+        `;
+        
+        container.appendChild(toast);
+        // Tự động xóa khỏi DOM sau 3s (khớp với animation CSS)
+        setTimeout(() => {
+            if(toast.parentElement) toast.parentElement.removeChild(toast);
+        }, 3000);
+    }
 
     function showMessage(title, msg, type = 'success') {
         const modal = document.getElementById('confirmModal');
@@ -482,6 +547,7 @@
     function closeFileRequest() {
         showConfirm("Đóng File hiện tại?", "Dữ liệu chưa lưu sẽ bị mất. Bạn có chắc chắn muốn đóng file?", () => {
             semesters = []; render();
+            lastGpaValue = null; // Reset GPA tracking
             document.getElementById('sum-gpa4').textContent = "0.00";
             document.getElementById('sum-gpa10').textContent = "0.00";
             document.getElementById('sum-tc').textContent = "0";
@@ -637,7 +703,22 @@
             html += `</tbody></table></div><button class="btn-add-row" onclick="addSub('${sem.id}')"><svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> Thêm môn học</button>`;
             card.innerHTML = html; container.appendChild(card);
         });
+        
+        // --- LOGIC TÍNH TOÁN VÀ HIỂN THỊ TOAST THÔNG BÁO ---
         const stats = calculate();
+        const currentGpa = parseFloat(stats.gpa4.toFixed(2));
+
+        if (lastGpaValue !== null && lastGpaValue !== currentGpa) {
+            const diff = currentGpa - lastGpaValue;
+            if (diff > 0) {
+                showToast(`GPA Tổng Tăng: <b>${lastGpaValue}</b> ➔ <b>${currentGpa}</b>`);
+            } else {
+                showToast(`GPA Tổng Giảm: <b>${lastGpaValue}</b> ➔ <b>${currentGpa}</b>`);
+            }
+        }
+        // Cập nhật giá trị cũ để dùng cho lần sau
+        lastGpaValue = currentGpa;
+
         document.getElementById('sum-gpa4').textContent = stats.gpa4.toFixed(2);
         document.getElementById('sum-gpa10').textContent = stats.gpa10.toFixed(2);
         document.getElementById('sum-tc').textContent = stats.tc;
