@@ -311,17 +311,7 @@
         }
         .btn-edit-small:hover { border-color: var(--primary); color: var(--primary); }
 
-        /* Celebration Animation */
-        @keyframes shine { 0% { background-position: -100px; } 100% { background-position: 300px; } }
-        .celebration-bg {
-            background: linear-gradient(135deg, #dcfce7 0%, #ffffff 100%);
-            border: 1px solid #bbf7d0; color: #166534; position: relative; overflow: hidden;
-        }
-        .celebration-bg::after {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.8), transparent);
-            transform: skewX(-20deg); animation: shine 2.5s infinite linear;
-        }
+
 
         /* --- FLOATING STATUS BAR --- */
         #floating-bar {
