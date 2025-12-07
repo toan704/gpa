@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GPA Manager - VKU Expert</title>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/3135/3135810.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -20,10 +21,27 @@
             --grade-C: #a855f7;
             --grade-D: #eab308;
             --grade-F: #ef4444;
+            
+            --badge-easy-bg: #dcfce7; --badge-easy-text: #166534;
+            --badge-med-bg: #fef9c3; --badge-med-text: #854d0e;
+            --badge-hard-bg: #fee2e2; --badge-hard-text: #991b1b;
         }
 
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; font-size: 13.5px; display: flex; flex-direction: column; min-height: 100vh; }
-        .container { max-width: 1200px; margin: 0 auto; width: 100%; flex: 1; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            margin: 0; 
+            padding: 20px; 
+            font-size: 13.5px; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh;
+            padding-bottom: 80px; 
+            box-sizing: border-box;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; width: 100%; flex: 1; display: flex; flex-direction: column;}
 
         header { 
             background: var(--surface); padding: 15px 20px; border-radius: 10px; 
@@ -39,7 +57,7 @@
             border: 1px solid var(--border); background: var(--surface); color: var(--text); 
             padding: 8px 14px; border-radius: 6px; cursor: pointer; font-weight: 500; 
             transition: 0.2s; display: flex; align-items: center; gap: 8px; font-size: 13px; font-family: inherit;
-            white-space: nowrap;
+            white-space: nowrap; position: relative;
         }
         .btn svg { width: 16px; height: 16px; fill: var(--icon-color); }
         .btn:hover { border-color: var(--primary); background: #f0f9ff; color: var(--primary); }
@@ -50,10 +68,6 @@
         .btn-primary:hover { background: var(--primary-dark); color: white; }
         .btn-primary:hover svg { fill: white; }
 
-        .btn-danger { color: #ef4444; border-color: #fee2e2; background: #fef2f2; padding: 4px 8px; font-size: 12px; }
-        .btn-danger:hover { background: #fee2e2; }
-        .btn-danger svg { fill: #ef4444; width: 14px; height: 14px; }
-        
         .summary-bar {
             display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;
             background: linear-gradient(to right, var(--primary-dark), var(--primary));
@@ -63,7 +77,7 @@
         .sum-item div:first-child { font-size: 0.85rem; opacity: 0.9; }
         .sum-item div:last-child { font-size: 1.5rem; font-weight: 700; }
 
-        .card { background: var(--surface); border-radius: 10px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
+        .card { background: var(--surface); border-radius: 10px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.03); transition: 0.3s; }
         
         .card-header { 
             display: flex; justify-content: space-between; align-items: center; 
@@ -84,6 +98,7 @@
         }
         .sem-stats span { white-space: nowrap; }
 
+        /* Dropdown Styles */
         .dropdown { position: relative; display: inline-block; }
         .dropdown-toggle {
             background: none; border: none; cursor: pointer; padding: 5px;
@@ -93,7 +108,7 @@
         .dropdown-toggle:hover { background: #f1f5f9; color: var(--text); }
         .dropdown-menu {
             display: none; position: absolute; right: 0; top: 100%; z-index: 50;
-            background: white; min-width: 160px; border-radius: 8px;
+            background: white; min-width: 260px; border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid var(--border);
             padding: 5px 0; animation: fadeIn 0.1s ease-out;
         }
@@ -107,17 +122,19 @@
         .dropdown-item.danger { color: #ef4444; }
         .dropdown-item.danger:hover { background: #fef2f2; color: #dc2626; }
         .dropdown-item svg { width: 16px; height: 16px; fill: currentColor; }
+        
+        .dropdown-divider { border-top: 1px solid #e2e8f0; margin: 5px 0; }
+        .dropdown-header { font-size: 11px; text-transform: uppercase; color: #94a3b8; padding: 5px 15px; font-weight: 600; letter-spacing: 0.5px; }
+        
+        .dropdown-item-check { justify-content: space-between; }
+        .dropdown-item-check input { cursor: pointer; }
 
         .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
         table { width: 100%; border-collapse: collapse; min-width: 800px; }
         
         td { 
-            padding: 0; 
-            border: 1px solid #e2e8f0; 
-            text-align: center; 
-            vertical-align: middle; 
-            height: 36px; 
-            position: relative;
+            padding: 0; border: 1px solid #e2e8f0; text-align: center; 
+            vertical-align: middle; height: 36px; position: relative;
         }
         th { text-align: center; background: #f8fafc; padding: 10px; font-weight: 600; font-size: 0.8rem; color: #475569; border: 1px solid #e2e8f0; }
 
@@ -125,21 +142,41 @@
             width: 100%; height: 100%; border: none; padding: 0 5px; 
             text-align: center; font-family: inherit; background: transparent; 
             font-weight: 500; display: block; box-sizing: border-box;
+            font-size: 13.5px;
         }
+        select.cell-input { text-align-last: center; cursor: pointer; }
         input.cell-input:hover, select.cell-input:hover { background: #f8fafc; }
         input.cell-input:focus, select.cell-input:focus { 
             outline: 2px solid var(--primary); background: white; z-index: 10; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
-        /* Animation Highlight */
-        @keyframes flashHighlight {
-            0% { background-color: #fde047; }
-            100% { background-color: transparent; }
+        .btn-note {
+            background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;
+            transition: 0.2s; position: relative;
         }
+        .btn-note svg { width: 18px; height: 18px; fill: #94a3b8; } 
+        .btn-note:hover svg { fill: var(--primary); }
+        .btn-note.has-note svg { fill: #f59e0b; } 
+        
+        /* Note Tooltip */
+        .btn-note:hover::after {
+            content: attr(data-tooltip);
+            position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+            background: #334155; color: white; padding: 6px 12px; border-radius: 4px;
+            font-size: 12px; white-space: pre-wrap; z-index: 100; pointer-events: none;
+            opacity: 0; transition: 0.2s; visibility: hidden; max-width: 200px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .btn-note[data-tooltip]:not([data-tooltip=""]):hover::after {
+            opacity: 1; visibility: visible;
+        }
+
+        @keyframes flashHighlight { 0% { background-color: #fde047; } 100% { background-color: transparent; } }
         .highlight-row { animation: flashHighlight 2s ease-out; }
 
         .g-A { color: var(--grade-A); } .g-B { color: var(--grade-B); } .g-C { color: var(--grade-C); } .g-D { color: var(--grade-D); } .g-F { color: var(--grade-F); }
 
+        /* MODALS */
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center;
@@ -147,7 +184,7 @@
         }
         .modal-overlay.open { opacity: 1; visibility: visible; }
         .modal {
-            background: white; width: 600px; max-width: 90%; border-radius: 12px; padding: 25px;
+            background: white; width: 750px; max-width: 90%; border-radius: 12px; padding: 20px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2); transform: translateY(20px); transition: 0.3s; position: relative;
             max-height: 90vh; display: flex; flex-direction: column;
         }
@@ -160,6 +197,7 @@
         .icon-warn { background: #fee2e2; fill: #ef4444; }
         .icon-success { background: #dcfce7; fill: #22c55e; }
         .icon-info { background: #e0f2fe; fill: #0ea5e9; }
+        .icon-edit { background: #f0f9ff; fill: #0ea5e9; }
         
         .modal-actions { margin-top: 20px; display: flex; justify-content: center; gap: 15px; }
         .btn-confirm-yes { background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
@@ -182,43 +220,124 @@
         .btn-add-row:hover { border-color: var(--primary); color: var(--primary); background: #f0f9ff; }
         .btn-add-row svg { fill: currentColor; width: 14px; height: 14px; }
 
+        /* FOOTER COMPACT FIXED */
         footer {
-            margin-top: 40px; 
-            padding: 20px 0; 
-            border-top: 1px solid #e2e8f0;
-            text-align: left;
-            color: #64748b; 
-            font-size: 0.9rem;
+            margin-top: auto; width: fit-content; margin: 20px auto; padding: 8px 20px;
+            font-size: 0.8rem; color: #64748b; background: #f1f5f9; border-radius: 50px; border: 1px solid #e2e8f0;
         }
-        footer a { color: var(--primary); text-decoration: none; font-weight: 500; }
+        footer a { color: var(--primary); text-decoration: none; font-weight: 600; }
         footer a:hover { text-decoration: underline; }
 
-        /* --- TOAST NOTIFICATION STYLES --- */
-        #toast-container {
-            position: fixed; top: 20px; right: 20px; z-index: 2000;
-            display: flex; flex-direction: column; gap: 10px;
+        /* DRAG AND DROP ZONE */
+        .empty-state {
+            text-align:center; padding:50px 20px; color:#94a3b8;
+            border: 2px dashed #cbd5e1; border-radius: 10px; margin: 20px 0; transition: 0.2s; cursor: pointer;
         }
-        .toast-notification {
-            background: #ffffff; color: var(--text); padding: 12px 18px; border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15); border-left: 5px solid var(--primary);
-            display: flex; align-items: center; gap: 12px; min-width: 250px;
-            animation: slideInRight 0.3s ease-out, fadeOut 0.3s ease-in 2.7s forwards;
-            font-size: 0.9rem;
+        .empty-state.drag-active { border-color: var(--primary); background: #f0f9ff; color: var(--primary); }
+
+        /* --- SUGGESTION COMPACT UI --- */
+        .assessment-card {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 1px solid #bae6fd;
+            border-radius: 8px; padding: 10px 15px; margin-bottom: 10px; 
+            display: flex; flex-direction: column; gap: 5px;
         }
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        .assess-title { font-weight: 700; color: #0369a1; font-size: 0.95rem; display:flex; justify-content:space-between; align-items:center; }
+        .assess-desc { color: #334155; font-size: 0.85rem; line-height: 1.3; }
+        
+        .suggestion-list { list-style: none; padding: 0; margin: 0; }
+        .suggestion-item {
+            padding: 8px 10px; /* Reduced padding */
+            border-bottom: 1px solid #f1f5f9;
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 12px; 
+            transition: background 0.1s;
         }
-        @keyframes fadeOut {
-            to { opacity: 0; visibility: hidden; }
+        .suggestion-item:hover { background: #f8fafc; }
+        .suggestion-item:last-child { border-bottom: none; }
+        
+        .sub-name-group { flex-grow: 1; margin-right: 10px; }
+        .sub-name { font-weight: 600; color: var(--text); display: block; margin-bottom: 1px; font-size: 0.85rem; }
+        .sub-meta { font-size: 0.75rem; color: #64748b; display: flex; gap: 8px; align-items: center; }
+        .sub-details { font-size: 0.75rem; color: #94a3b8; }
+        
+        .change-box { 
+            display: inline-flex; align-items: center; gap: 4px; font-weight: 600; font-size: 0.8rem; 
+            color: var(--primary-dark);
         }
-        .toast-icon-wrapper {
-            width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-weight: bold; font-size: 12px; flex-shrink: 0;
+        .arrow-icon { color: #cbd5e1; font-size: 0.7rem; }
+        
+        .badge { font-size: 9px; padding: 1px 5px; border-radius: 3px; font-weight: 700; text-transform: uppercase; margin-right: 5px; }
+        .badge-easy { background: var(--badge-easy-bg); color: var(--badge-easy-text); }
+        .badge-med { background: var(--badge-med-bg); color: var(--badge-med-text); }
+        .badge-hard { background: var(--badge-hard-bg); color: var(--badge-hard-text); }
+
+        .btn-edit-small {
+            background: white; border: 1px solid #cbd5e1; color: #64748b; 
+            padding: 2px 6px; border-radius: 4px; font-size: 11px; cursor: pointer;
+            transition: all 0.2s; white-space: nowrap; margin-left: 5px;
+        }
+        .btn-edit-small:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* Celebration Animation */
+        @keyframes shine { 0% { background-position: -100px; } 100% { background-position: 300px; } }
+        .celebration-bg {
+            background: linear-gradient(135deg, #dcfce7 0%, #ffffff 100%);
+            border: 1px solid #bbf7d0; color: #166534; position: relative; overflow: hidden;
+        }
+        .celebration-bg::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.8), transparent);
+            transform: skewX(-20deg); animation: shine 2.5s infinite linear;
         }
 
+        /* --- FLOATING STATUS BAR --- */
+        #floating-bar {
+            position: fixed; bottom: 20px; right: 20px; left: 20px;
+            background: white; border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 25px; z-index: 999;
+            transform: translateY(150%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s, border-color 0.3s;
+            border: 2px solid transparent; max-width: 600px; margin: 0 auto;
+        }
+        #floating-bar.visible { transform: translateY(0); }
+        
+        @keyframes pulseGreen { 0% { border-color: #22c55e; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); } 70% { border-color: #22c55e; box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); } 100% { border-color: transparent; box-shadow: 0 10px 30px rgba(0,0,0,0.15); } }
+        @keyframes pulseRed { 0% { border-color: #ef4444; box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { border-color: #ef4444; box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { border-color: transparent; box-shadow: 0 10px 30px rgba(0,0,0,0.15); } }
+        #floating-bar.pulse-green { animation: pulseGreen 1.5s ease-out infinite; }
+        #floating-bar.pulse-red { animation: pulseRed 1.5s ease-out infinite; }
+
+        .float-content { display: flex; gap: 30px; align-items: center; }
+        .float-item { text-align: center; }
+        .float-label { font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+        .float-value { font-weight: 800; font-size: 1.3rem; color: var(--primary-dark); line-height: 1.2; }
+        .float-btn {
+            background: var(--primary); color: white; border: none; width: 40px; height: 40px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 4px 10px rgba(14, 165, 233, 0.4);
+            transition: 0.2s;
+        }
+        .float-btn:hover { transform: scale(1.1); background: var(--primary-dark); }
+
+        /* TABS */
+        .tabs { display: flex; border-bottom: 2px solid #e2e8f0; margin-bottom: 10px; gap: 5px; }
+        .tab-btn {
+            flex: 1; padding: 8px; background: none; border: none;
+            font-weight: 600; color: #64748b; cursor: pointer; transition: 0.2s;
+            border-bottom: 3px solid transparent; margin-bottom: -2px; font-size: 12px;
+        }
+        .tab-btn:hover { color: var(--primary); background: #f8fafc; }
+        .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background: #f0f9ff; }
+        .tab-content { display: none; max-height: 400px; overflow-y: auto; padding-right: 5px; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s; }
+        .tab-content::-webkit-scrollbar { width: 6px; }
+        .tab-content::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 3px; }
+        .tab-content::-webkit-scrollbar-track { background-color: #f1f5f9; }
+
         @media (max-width: 768px) {
-            body { padding: 10px; }
+            body { padding: 10px; padding-bottom: 80px; }
             header { flex-direction: column; align-items: stretch; text-align: center; }
             h1 { justify-content: center; margin-bottom: 10px; }
             .controls { justify-content: center; }
@@ -228,8 +347,20 @@
             .card-header { align-items: flex-start; }
             .sem-title { width: 100%; margin-bottom: 5px; }
             .sem-stats { width: 100%; justify-content: space-between; font-size: 0.75rem; }
-            #toast-container { right: 10px; left: 10px; top: 10px; }
-            .toast-notification { width: auto; }
+            #floating-bar { padding: 8px 15px; left: 10px; right: 10px; bottom: 15px; }
+            .float-content { gap: 15px; flex-grow: 1; justify-content: space-around; }
+            .float-value { font-size: 1.1rem; }
+            .modal { width: 100%; margin: 0 10px; padding: 15px; box-sizing: border-box; } /* Fixed padding */
+            .tabs { flex-wrap: wrap; }
+            .tab-btn { flex: 1 1 40%; text-align: center; }
+            .suggestion-item { flex-direction: row; align-items: center; } 
+            
+            /* FIX MOBILE DROPDOWN OVERFLOW */
+            .dropdown-menu { 
+                right: 0; left: auto; /* Align right to prevent overflow */
+                min-width: 220px; 
+                transform-origin: top right;
+            }
         }
     </style>
 </head>
@@ -241,20 +372,31 @@
         <div class="controls">
             <input type="file" id="jsonInput" accept=".json" style="display:none">
             
-            <button class="btn" onclick="document.getElementById('jsonInput').click()">
-                <svg viewBox="0 0 24 24"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
-                Mở File
-            </button>
-            
-            <button class="btn" onclick="closeFileRequest()">
-                <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-                Đóng File
-            </button>
-            
-            <button class="btn" onclick="saveData()">
-                <svg viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
-                Lưu
-            </button>
+            <div class="dropdown">
+                <button class="btn" onclick="toggleDropdown('file-options', event)" title="Tùy chọn">
+                    <svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                    Tùy chọn
+                </button>
+                <div id="menu-file-options" class="dropdown-menu">
+                    <div class="dropdown-item" onclick="document.getElementById('jsonInput').click()">
+                        <svg viewBox="0 0 24 24" style="fill:#64748b"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
+                        Mở File JSON
+                    </div>
+                    <div class="dropdown-item" onclick="saveData(true)">
+                        <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+                        Xuất JSON
+                    </div>
+                    <div class="dropdown-item danger" onclick="closeFileRequest()">
+                        <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                        Đóng & Xóa
+                    </div>
+                    
+                    <div class="dropdown-divider"></div>
+                    <div class="dropdown-header">Hiện / Ẩn Học Kỳ</div>
+                    <div id="semester-toggles-container">
+                        </div>
+                </div>
+            </div>
             
             <button class="btn" onclick="showScriptModal()">
                 <svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
@@ -262,13 +404,13 @@
             </button>
 
             <button class="btn btn-primary" onclick="showSuggestions()">
-                <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 0 1 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 0 1 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg>
                 Cải thiện
             </button>
         </div>
     </header>
 
-    <div class="summary-bar">
+    <div class="summary-bar" id="main-summary-bar">
         <div class="sum-item">
             <div>GPA Hệ 4</div>
             <div id="sum-gpa4">0.00</div>
@@ -295,11 +437,43 @@
     </button>
 </div>
 
-<footer>
+<footer id="main-footer">
     Liên hệ: <a href="https://fb.com/toan704" target="_blank">Facebook</a>
 </footer>
 
-<div id="toast-container"></div>
+<div id="floating-bar">
+    <div class="float-content">
+        <div class="float-item">
+            <div class="float-label">GPA 4</div>
+            <div class="float-value" id="float-gpa4">0.00</div>
+        </div>
+        <div class="float-item">
+            <div class="float-label">GPA 10</div>
+            <div class="float-value" id="float-gpa10">0.00</div>
+        </div>
+        <div class="float-item">
+            <div class="float-label">Tín chỉ</div>
+            <div class="float-value" id="float-tc">0</div>
+        </div>
+    </div>
+    <button class="float-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Về đầu trang">
+        <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:white"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>
+    </button>
+</div>
+
+<div class="modal-overlay" id="noteModal">
+    <div class="modal modal-mini">
+        <div class="modal-icon icon-edit">
+            <svg viewBox="0 0 24 24" style="width:30px; height:30px;"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+        </div>
+        <h3 style="margin:0 0 10px 0; color:#1e293b; text-align:center;">Ghi chú môn học</h3>
+        <textarea id="noteInput" rows="4" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px; font-family:inherit; resize:vertical; box-sizing:border-box; margin-bottom:15px;" placeholder="Nhập ghi chú..."></textarea>
+        <div class="modal-actions">
+            <button class="btn-confirm-no" onclick="closeNoteModal()">Hủy bỏ</button>
+            <button class="btn-ok" onclick="saveCurrentNote()">Lưu lại</button>
+        </div>
+    </div>
+</div>
 
 <div class="modal-overlay" id="scriptModal">
     <div class="modal">
@@ -313,28 +487,18 @@
         <div class="code-container" id="jsCodeBlock">
 (function() {
     const GPA_SCALE = { 'A': 4.0, 'B': 3.0, 'C': 2.0, 'D': 1.0, 'F': 0.0, null: 0.0 };
-    
     function scoreToLetterGrade(score) {
         if (score === null || score < 4.0) return 'F';
         if (score >= 8.5) return 'A'; if (score >= 7.0) return 'B';
         if (score >= 5.5) return 'C'; if (score >= 4.0) return 'D'; return 'F';
     }
-    let svName = "Không rõ";
-    let svCode = "Không rõ";
-    
+    let svName = "Không rõ"; let svCode = "Không rõ";
     try {
         let profileText = $('.user-profile.dropdown-toggle').first().text().trim();
         profileText = profileText.replace(/[\r\n\t]+/g, " ").replace(/\s\s+/g, ' ');
         const parts = profileText.split('-');
-        if (parts.length >= 2) {
-            svName = parts[0].trim();
-            svCode = parts[1].trim(); 
-        } else {
-            svName = profileText;
-        }
-    } catch (e) {
-        console.error("Lỗi khi lấy thông tin SV:", e);
-    }
+        if (parts.length >= 2) { svName = parts[0].trim(); svCode = parts[1].trim(); } else { svName = profileText; }
+    } catch (e) { console.error("Lỗi khi lấy thông tin SV:", e); }
 
     const scoreTableBody = $('.x_content .table-responsive table tbody');
     if (scoreTableBody.length === 0) { console.error("Không tìm thấy bảng điểm."); return; }
@@ -356,9 +520,7 @@
             const fullHeader = semesterHeader.text().trim().replace(/[\r\n\t]+/g, ' ').replace(/\s{2,}/g, ' ');
             const parsed = parseSemesterString(fullHeader);
             currentSemester = parsed.semester; currentAcademicYear = parsed.academicYear;
-            
             if (currentAcademicYear === "Quy đổi") { currentSemester = null; return; }
-            
             if (!academicTranscript[currentAcademicYear]) academicTranscript[currentAcademicYear] = {};
             if (!academicTranscript[currentAcademicYear][currentSemester]) academicTranscript[currentAcademicYear][currentSemester] = [];
             return;
@@ -371,7 +533,6 @@
             const diemCC = $(columns[4]).text().trim(); const diemBT = $(columns[5]).text().trim();
             const diemGK = $(columns[6]).text().trim(); const diemCK = $(columns[7]).text().trim();
             const diemT10 = $(columns[8]).text().trim();
-            
             const safeParseFloat = (str) => { const num = parseFloat(str); return isNaN(num) ? null : num; };
             const finalScore10 = safeParseFloat(diemT10);
             const finalLetter = scoreToLetterGrade(finalScore10);
@@ -381,16 +542,14 @@
                 "STT_ID": stt.length > 0 ? stt : null, "TenLopHocPhan": tenLHP,
                 "SoTinChi": parseInt(soTC)||null, "LanHoc": parseInt(lanHoc)||null,
                 "DiemThanhPhan": { "ChuyenCan_GVHD": safeParseFloat(diemCC), "BaiTap": safeParseFloat(diemBT), "GiuaKy": safeParseFloat(diemGK), "CuoiKy_DoAn": safeParseFloat(diemCK) },
-                "DiemTongKet": { "He10": finalScore10, "He4": finalScore4, "DiemChu": finalLetter }
+                "DiemTongKet": { "He10": finalScore10, "He4": finalScore4, "DiemChu": finalLetter },
+                "GhiChu": "" 
             });
         }
     });
 
     const finalResult = {
-        "ThongTinSinhVien": {
-            "HoTen": svName,
-            "MaSinhVien": svCode
-        },
+        "ThongTinSinhVien": { "HoTen": svName, "MaSinhVien": svCode },
         "KetQuaHocTap": academicTranscript
     };
 
@@ -411,17 +570,30 @@
 <div class="modal-overlay" id="suggestionModal">
     <div class="modal">
         <button class="btn-close-modal" onclick="closeSuggestions()">&times;</button>
-        <div style="margin-bottom:15px;">
-            <h2 style="margin:0; font-size:1.3rem; color:var(--primary-dark)">Gợi ý cải thiện</h2>
+        <div style="margin-bottom:10px;">
+            <h2 style="margin:0; font-size:1.2rem; color:var(--primary-dark)" id="suggestionTitle">Gợi ý cải thiện</h2>
         </div>
-        <div style="background:#f1f5f9; padding:15px; border-radius:8px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center">
+        
+        <div style="background:#f1f5f9; padding:10px 15px; border-radius:8px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center">
             <div>
-                <label style="font-weight:600; margin-right:10px;">Mục tiêu GPA (4.0):</label>
-                <input type="number" id="targetGPA" value="3.20" step="0.01" style="width:70px; font-weight:bold; background:white; border:1px solid #ccc; padding:5px; border-radius:4px" onchange="renderSuggestionContent()">
+                <label style="font-weight:600; margin-right:10px; font-size:0.9rem">Mục tiêu GPA (4.0):</label>
+                <input type="number" id="targetGPA" value="3.20" step="0.01" style="width:60px; font-weight:bold; background:white; border:1px solid #ccc; padding:4px; border-radius:4px" onchange="runSuggestionLogic()">
             </div>
-            <div id="target-status" style="font-size:0.95rem; font-weight:600"></div>
+            <div id="target-status" style="font-size:0.9rem; font-weight:600"></div>
         </div>
-        <div id="suggestion-list" style="max-height: 350px; overflow-y: auto;"></div>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab(1)" id="tab-btn-1">Tốc độ</button>
+            <button class="tab-btn" onclick="switchTab(2)" id="tab-btn-2">An toàn</button>
+            <button class="tab-btn" onclick="switchTab(3)" id="tab-btn-3">Tổ hợp</button>
+            <button class="tab-btn" onclick="switchTab(4)" id="tab-btn-4">Theo Năng lực</button>
+        </div>
+
+        <div id="tab-content-1" class="tab-content active"></div>
+        <div id="tab-content-2" class="tab-content"></div>
+        <div id="tab-content-3" class="tab-content"></div>
+        <div id="tab-content-4" class="tab-content"></div>
+
     </div>
 </div>
 
@@ -469,45 +641,62 @@
 
 <script>
     let semesters = [];
+    let studentInfo = null; 
     let onConfirmAction = null; 
     let currentTuitionSemId = null;
     let defaultTuitionPrice = 500000;
-    
-    // --- BIẾN TOÀN CỤC ĐỂ LƯU GPA CŨ ---
+    let activeNoteSemId = null;
+    let activeNoteSubId = null;
     let lastGpaValue = null;
+    let suggestionModeSemId = null;
 
-    // --- HÀM HIỂN THỊ TOAST GÓC PHẢI ---
-    function showToast(message, type = 'default') {
-        const container = document.getElementById('toast-container');
-        const toast = document.createElement('div');
-        toast.className = 'toast-notification';
-        
-        let iconHtml = '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor"><path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>';
-        let borderColor = '#0ea5e9';
-        let bgIcon = '#e0f2fe';
-        let colorIcon = '#0ea5e9';
+    const STORAGE_KEY = 'vku_gpa_data_local';
 
-        if (message.includes('Tăng')) {
-            borderColor = '#22c55e'; bgIcon = '#dcfce7'; colorIcon = '#22c55e';
-            iconHtml = '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>';
-        } else if (message.includes('Giảm')) {
-            borderColor = '#ef4444'; bgIcon = '#fee2e2'; colorIcon = '#ef4444';
-            iconHtml = '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor"><path d="M16 18l2.29-2.29-4.88-4.88-4 4L2 7.41 3.41 6l6 6 4-4 6.3 6.29L22 12v6z"/></svg>';
+    window.onload = function() {
+        const storedData = localStorage.getItem(STORAGE_KEY);
+        if (storedData) {
+            try {
+                const parsed = JSON.parse(storedData);
+                if (parsed.semesters) {
+                    semesters = parsed.semesters;
+                    studentInfo = parsed.studentInfo;
+                    if(studentInfo) updateTitle();
+                } else {
+                    semesters = parsed; 
+                }
+                
+                // Ensure visibility property exists
+                semesters.forEach(s => { if(s.isVisible === undefined) s.isVisible = true; });
+
+                if (semesters.length > 0) {
+                    render();
+                } else {
+                    render();
+                }
+            } catch (e) {
+                console.error("Lỗi đọc cache", e);
+                render();
+            }
+        } else {
+            render();
         }
+    };
 
-        toast.style.borderLeftColor = borderColor;
-        toast.innerHTML = `
-            <div class="toast-icon-wrapper" style="background:${bgIcon}; color:${colorIcon}">
-                ${iconHtml}
-            </div>
-            <div>${message}</div>
-        `;
-        
-        container.appendChild(toast);
-        // Tự động xóa khỏi DOM sau 3s (khớp với animation CSS)
-        setTimeout(() => {
-            if(toast.parentElement) toast.parentElement.removeChild(toast);
-        }, 3000);
+    function saveToLocal(showMsg = false) {
+        const dataToSave = {
+            studentInfo: studentInfo,
+            semesters: semesters
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
+        if(showMsg) showMessage("Đã lưu", "Dữ liệu đã được lưu vào bộ nhớ trình duyệt.", "success");
+    }
+
+    function updateTitle() {
+        if(studentInfo && studentInfo.HoTen) {
+            document.getElementById('appTitle').innerHTML = `GPA <span style="font-size:0.9rem; font-weight:normal; color:#64748b; margin-left:5px">(${studentInfo.HoTen} - ${studentInfo.MaSinhVien})</span>`;
+        } else {
+             document.getElementById('appTitle').innerHTML = `GPA`;
+        }
     }
 
     function showMessage(title, msg, type = 'success') {
@@ -542,23 +731,29 @@
     function closeConfirmModal() { document.getElementById('confirmModal').classList.remove('open'); onConfirmAction = null; }
     function executeConfirm() { if(onConfirmAction) onConfirmAction(); closeConfirmModal(); }
 
-    function initEmpty() { semesters = [{ id: genId(), name: '2024-2025 - Học kỳ 1', subjects: [] }]; render(); }
+    function initEmpty() { semesters = [{ id: genId(), name: '2024-2025 - Học kỳ 1', subjects: [], isVisible: true }]; render(); saveToLocal(); }
     
     function closeFileRequest() {
-        showConfirm("Đóng File hiện tại?", "Dữ liệu chưa lưu sẽ bị mất. Bạn có chắc chắn muốn đóng file?", () => {
-            semesters = []; render();
-            lastGpaValue = null; // Reset GPA tracking
+        showConfirm("Đóng và Xóa dữ liệu?", "Dữ liệu hiện tại sẽ bị xóa khỏi bộ nhớ. Bạn có chắc chắn?", () => {
+            semesters = []; 
+            studentInfo = null;
+            render();
+            localStorage.removeItem(STORAGE_KEY);
+            lastGpaValue = null; 
             document.getElementById('sum-gpa4').textContent = "0.00";
             document.getElementById('sum-gpa10').textContent = "0.00";
             document.getElementById('sum-tc').textContent = "0";
             document.getElementById('sum-count').textContent = "0";
-            document.getElementById('semester-container').innerHTML = '<div style="text-align:center; padding:40px; color:#94a3b8">Chưa có dữ liệu. Vui lòng Mở File JSON hoặc Thêm học kỳ mới.</div>';
-            document.getElementById('appTitle').innerHTML = 'GPA';
+            updateTitle();
         });
     }
 
     document.getElementById('jsonInput').addEventListener('change', e => {
-        const file = e.target.files[0];
+        handleFileUpload(e.target.files[0]);
+        e.target.value = ''; 
+    });
+
+    function handleFileUpload(file) {
         if (!file) return;
         const reader = new FileReader();
         reader.onload = ev => {
@@ -567,16 +762,23 @@
                 let dataToProcess = imported;
                 if (imported.KetQuaHocTap) {
                     if (imported.ThongTinSinhVien) {
-                        document.getElementById('appTitle').innerHTML = `GPA <span style="font-size:0.9rem; font-weight:normal; color:#64748b; margin-left:5px">(${imported.ThongTinSinhVien.HoTen} - ${imported.ThongTinSinhVien.MaSinhVien})</span>`;
+                        studentInfo = imported.ThongTinSinhVien;
+                        updateTitle();
                     }
                     dataToProcess = imported.KetQuaHocTap;
                 }
                 if(Array.isArray(dataToProcess)) { semesters = dataToProcess; } else { processLegacyImport(dataToProcess); }
+                
+                // Ensure visibility
+                semesters.forEach(s => { if(s.isVisible === undefined) s.isVisible = true; });
+                
                 render();
+                saveToLocal();
+                showMessage("Thành công", "Đã tải dữ liệu thành công!", "success");
             } catch (err) { showMessage("Lỗi", "File không hợp lệ hoặc bị lỗi định dạng!", "error"); }
         };
         reader.readAsText(file);
-    });
+    }
 
     function processLegacyImport(data) {
         semesters = [];
@@ -589,13 +791,14 @@
                     type: (s.LoaiMon === 'cai_thien' || s.LanHoc > 1) ? 'improve' : 'new',
                     cc: s.DiemThanhPhan?.ChuyenCan_GVHD || '', bt: s.DiemThanhPhan?.BaiTap || '',
                     gk: s.DiemThanhPhan?.GiuaKy || '', ck: s.DiemThanhPhan?.CuoiKy_DoAn || '',
-                    score10: s.DiemTongKet.He10
+                    score10: s.DiemTongKet.He10,
+                    note: s.note || s.GhiChu || "" 
                 }));
                 if(isSummer) {
                     if(!summerBuffer[year]) summerBuffer[year] = [];
                     summerBuffer[year].push(...subList);
                 } else {
-                    semesters.push({ id: genId(), name: `${year} - ${sem}`, subjects: subList });
+                    semesters.push({ id: genId(), name: `${year} - ${sem}`, subjects: subList, isVisible: true });
                 }
             }
         }
@@ -606,25 +809,33 @@
                 hk2.subjects.push(...summerBuffer[year]);
                 if (!hk2.name.includes("Học kỳ hè")) { hk2.name += " (và Học kỳ hè)"; }
             } else { 
-                semesters.push({ id: genId(), name: `${year} - Học kỳ hè`, subjects: summerBuffer[year] }); 
+                semesters.push({ id: genId(), name: `${year} - Học kỳ hè`, subjects: summerBuffer[year], isVisible: true }); 
             }
         }
         semesters.sort((a,b) => a.name.localeCompare(b.name));
     }
 
-    function saveData() {
+    function saveData(exportJson = false) {
         if(semesters.length === 0) { showMessage("Thông báo", "Không có dữ liệu để lưu!", "info"); return; }
-        const dataStr = JSON.stringify(semesters, null, 2);
-        const blob = new Blob([dataStr], {type: "application/json"});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = "bang-diem-gpa.json"; a.click(); URL.revokeObjectURL(url);
-        showMessage("Thành công", "File JSON đã được tải xuống!", "success");
+        if(exportJson) {
+            const exportData = {
+                ThongTinSinhVien: studentInfo || { HoTen: "Unknown", MaSinhVien: "" },
+                KetQuaHocTap: semesters
+            };
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const blob = new Blob([dataStr], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = "bang-diem-gpa.json"; a.click(); URL.revokeObjectURL(url);
+        } else {
+            saveToLocal(true);
+        }
     }
 
     function calculate() {
         let unique = {}; 
         semesters.forEach(sem => {
+            if (sem.isVisible === false) return; // Skip hidden semesters
             sem.subjects.forEach(sub => {
                 if (sub.score10 !== null && sub.score10 !== "" && sub.tc > 0) {
                     const s10 = parseFloat(sub.score10); const letter = scoreToLetter(s10); const s4 = letterTo4(letter);
@@ -664,10 +875,48 @@
 
     function render() {
         const container = document.getElementById('semester-container'); container.innerHTML = '';
-        if(semesters.length === 0) return;
+        
+        if(semesters.length === 0) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'empty-state';
+            emptyState.id = 'empty-state-zone';
+            emptyState.innerHTML = `
+                <div style="font-size:2rem; margin-bottom:10px;">📂</div>
+                <div style="font-weight:600; font-size:1.1rem; color:var(--text)">Chưa có dữ liệu</div>
+                <div style="margin-top:5px; font-size:0.9rem">Kéo thả file JSON vào đây hoặc chọn <a href="#" onclick="document.getElementById('jsonInput').click(); return false;" style="color:var(--primary)">Mở File JSON</a></div>
+                <div style="margin-top:15px">hoặc</div>
+                <button class="btn btn-primary" onclick="addSemester()" style="margin:15px auto 0 auto; display:inline-flex;">Thêm học kỳ mới</button>
+            `;
+            container.appendChild(emptyState);
+            const dropZone = document.getElementById('empty-state-zone');
+            dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-active'); });
+            dropZone.addEventListener('dragleave', (e) => { e.preventDefault(); dropZone.classList.remove('drag-active'); });
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault(); dropZone.classList.remove('drag-active');
+                handleFileUpload(e.dataTransfer.files[0]);
+            });
+            return;
+        }
+
+        // Render Semester Toggles in Menu
+        const toggleContainer = document.getElementById('semester-toggles-container');
+        if(toggleContainer) {
+            toggleContainer.innerHTML = '';
+            semesters.forEach(sem => {
+                const item = document.createElement('div');
+                item.className = 'dropdown-item dropdown-item-check';
+                item.onclick = (e) => { e.stopPropagation(); toggleSemesterVisibility(sem.id); };
+                item.innerHTML = `<span>${sem.name}</span> <input type="checkbox" ${sem.isVisible!==false ? 'checked' : ''} onchange="toggleSemesterVisibility('${sem.id}')">`;
+                toggleContainer.appendChild(item);
+            });
+        }
+
         semesters.forEach(sem => {
+            if (sem.isVisible === false) return; // Completely hide semester if not visible
+
             const stats = calculateSemStats(sem);
-            const card = document.createElement('div'); card.className = 'card';
+            const card = document.createElement('div'); 
+            card.className = `card`;
             let html = `
                 <div class="card-header">
                     <div style="display:flex; align-items:center; gap:10px; flex-grow: 1;">
@@ -680,6 +929,10 @@
                                 <div class="dropdown-item" onclick="openTuitionModal('${sem.id}')">
                                     <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
                                     Tính học phí
+                                </div>
+                                <div class="dropdown-item" onclick="showSuggestions('${sem.id}')">
+                                    <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 0 1 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg>
+                                    Gợi ý cải thiện kỳ này
                                 </div>
                                 <div class="dropdown-item danger" onclick="openDeleteModal('${sem.id}')">
                                     <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
@@ -695,43 +948,94 @@
                         <span style="border-left:1px solid #cbd5e1; padding-left:10px">GPA 4: <b style="color:var(--primary-dark)">${stats.gpa4}</b></span>
                     </div>
                 </div>
-                <div class="table-responsive"><table><thead><tr><th style="width:25%; text-align:left">Tên môn học</th><th style="width:50px">TC</th><th style="width:100px">Loại</th><th style="width:50px">CC</th><th style="width:50px">BT</th><th style="width:50px">GK</th><th style="width:50px">CK</th><th style="width:70px; background:#eff6ff">Tổng(10)</th><th style="width:50px">Chữ</th><th style="width:40px"></th></tr></thead><tbody>`;
+                <div class="table-responsive"><table><thead><tr>
+                    <th style="width:25%; text-align:left">Tên môn học</th>
+                    <th style="width:30px"></th> 
+                    <th style="width:50px">TC</th>
+                    <th style="width:100px">Loại</th>
+                    <th style="width:50px">CC</th><th style="width:50px">BT</th><th style="width:50px">GK</th><th style="width:50px">CK</th>
+                    <th style="width:70px; background:#eff6ff">Tổng(10)</th>
+                    <th style="width:50px">Chữ</th>
+                    <th style="width:40px"></th>
+                </tr></thead><tbody>`;
             sem.subjects.forEach(sub => {
                 const letter = scoreToLetter(sub.score10);
-                html += `<tr id="row-${sub.id}"><td style="text-align:left"><input type="text" class="cell-input" style="text-align:left" value="${sub.name}" onchange="upd('${sem.id}','${sub.id}','name',this.value)"></td><td><input type="number" class="cell-input" value="${sub.tc}" onchange="upd('${sem.id}','${sub.id}','tc',this.value)"></td><td><select class="cell-input" onchange="upd('${sem.id}','${sub.id}','type',this.value)"><option value="new" ${sub.type==='new'?'selected':''}>Học mới</option><option value="improve" ${sub.type==='improve'?'selected':''}>Cải thiện</option></select></td><td><input type="number" step="0.1" class="cell-input" value="${sub.cc||''}" onchange="upd('${sem.id}','${sub.id}','cc',this.value)"></td><td><input type="number" step="0.1" class="cell-input" value="${sub.bt||''}" onchange="upd('${sem.id}','${sub.id}','bt',this.value)"></td><td><input type="number" step="0.1" class="cell-input" value="${sub.gk||''}" onchange="upd('${sem.id}','${sub.id}','gk',this.value)"></td><td><input type="number" step="0.1" class="cell-input" value="${sub.ck||''}" onchange="upd('${sem.id}','${sub.id}','ck',this.value)"></td><td style="background:#eff6ff"><input type="number" step="0.1" class="cell-input" value="${sub.score10!==null?sub.score10:''}" id="score-${sub.id}" style="font-weight:bold; color:var(--primary-dark)" onchange="upd('${sem.id}','${sub.id}','score10',this.value)"></td><td class="g-${letter}" style="font-weight:bold">${letter}</td><td><button style="border:none; background:none; cursor:pointer; color:#94a3b8" onclick="delSub('${sem.id}','${sub.id}')">✕</button></td></tr>`;
+                const hasNote = sub.note && sub.note.trim() !== "";
+                html += `<tr id="row-${sub.id}">
+                <td style="text-align:left"><input type="text" class="cell-input" style="text-align:left" value="${sub.name}" onchange="upd('${sem.id}','${sub.id}','name',this.value)"></td>
+                <td><button class="btn-note ${hasNote ? 'has-note' : ''}" onclick="openNoteModal('${sem.id}','${sub.id}')" data-tooltip="${sub.note || 'Ghi chú'}"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg></button></td>
+                <td><input type="number" class="cell-input" value="${sub.tc}" onchange="upd('${sem.id}','${sub.id}','tc',this.value)"></td>
+                <td><select class="cell-input" onchange="upd('${sem.id}','${sub.id}','type',this.value)"><option value="new" ${sub.type==='new'?'selected':''}>Học mới</option><option value="improve" ${sub.type==='improve'?'selected':''}>Cải thiện</option></select></td>
+                <td><input type="number" step="0.1" class="cell-input" value="${sub.cc||''}" onchange="upd('${sem.id}','${sub.id}','cc',this.value)"></td>
+                <td><input type="number" step="0.1" class="cell-input" value="${sub.bt||''}" onchange="upd('${sem.id}','${sub.id}','bt',this.value)"></td>
+                <td><input type="number" step="0.1" class="cell-input" value="${sub.gk||''}" onchange="upd('${sem.id}','${sub.id}','gk',this.value)"></td>
+                <td><input type="number" step="0.1" class="cell-input" value="${sub.ck||''}" onchange="upd('${sem.id}','${sub.id}','ck',this.value)"></td>
+                <td style="background:#eff6ff"><input type="number" step="0.1" class="cell-input" value="${sub.score10!==null?sub.score10:''}" id="score-${sub.id}" style="font-weight:bold; color:var(--primary-dark)" onchange="upd('${sem.id}','${sub.id}','score10',this.value)"></td>
+                <td style="position:relative"><select class="cell-input g-${letter}" style="font-weight:bold;" onchange="upd('${sem.id}','${sub.id}','letter',this.value)"><option value="" style="color:black"></option><option value="A" class="g-A" ${letter==='A'?'selected':''}>A</option><option value="B" class="g-B" ${letter==='B'?'selected':''}>B</option><option value="C" class="g-C" ${letter==='C'?'selected':''}>C</option><option value="D" class="g-D" ${letter==='D'?'selected':''}>D</option><option value="F" class="g-F" ${letter==='F'?'selected':''}>F</option></select></td>
+                <td><button style="border:none; background:none; cursor:pointer; color:#94a3b8" onclick="delSub('${sem.id}','${sub.id}')">✕</button></td></tr>`;
             });
             html += `</tbody></table></div><button class="btn-add-row" onclick="addSub('${sem.id}')"><svg viewBox="0 0 24 24" style="width:14px; height:14px; fill:currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> Thêm môn học</button>`;
             card.innerHTML = html; container.appendChild(card);
         });
         
-        // --- LOGIC TÍNH TOÁN VÀ HIỂN THỊ TOAST THÔNG BÁO ---
         const stats = calculate();
         const currentGpa = parseFloat(stats.gpa4.toFixed(2));
+        const floatBar = document.getElementById('floating-bar');
 
         if (lastGpaValue !== null && lastGpaValue !== currentGpa) {
-            const diff = currentGpa - lastGpaValue;
-            if (diff > 0) {
-                showToast(`GPA Tổng Tăng: <b>${lastGpaValue}</b> ➔ <b>${currentGpa}</b>`);
-            } else {
-                showToast(`GPA Tổng Giảm: <b>${lastGpaValue}</b> ➔ <b>${currentGpa}</b>`);
-            }
+            floatBar.classList.remove('pulse-green', 'pulse-red');
+            void floatBar.offsetWidth; 
+            if (currentGpa > lastGpaValue) floatBar.classList.add('pulse-green');
+            else floatBar.classList.add('pulse-red');
+            setTimeout(() => floatBar.classList.remove('pulse-green', 'pulse-red'), 2000);
         }
-        // Cập nhật giá trị cũ để dùng cho lần sau
         lastGpaValue = currentGpa;
 
         document.getElementById('sum-gpa4').textContent = stats.gpa4.toFixed(2);
         document.getElementById('sum-gpa10').textContent = stats.gpa10.toFixed(2);
         document.getElementById('sum-tc').textContent = stats.tc;
         document.getElementById('sum-count').textContent = stats.count;
+
+        document.getElementById('float-gpa4').textContent = stats.gpa4.toFixed(2);
+        document.getElementById('float-gpa10').textContent = stats.gpa10.toFixed(2);
+        document.getElementById('float-tc').textContent = stats.tc;
+    }
+
+    function toggleSemesterVisibility(id) {
+        const sem = semesters.find(s => s.id === id);
+        if(sem) { sem.isVisible = sem.isVisible === false ? true : false; }
+        render(); saveToLocal();
     }
 
     function toggleDropdown(semId, event) {
         event.stopPropagation();
-        const menu = document.getElementById('menu-' + semId);
-        document.querySelectorAll('.dropdown-menu').forEach(el => { if(el.id !== 'menu-' + semId) el.classList.remove('show'); });
+        const menuId = semId === 'file-options' ? 'menu-file-options' : 'menu-' + semId;
+        const menu = document.getElementById(menuId);
+        document.querySelectorAll('.dropdown-menu').forEach(el => { if(el.id !== menuId) el.classList.remove('show'); });
         menu.classList.toggle('show');
     }
     window.addEventListener('click', () => { document.querySelectorAll('.dropdown-menu').forEach(el => el.classList.remove('show')); });
+
+    function openNoteModal(semId, subId) {
+        activeNoteSemId = semId; activeNoteSubId = subId;
+        const sub = semesters.find(s => s.id === semId).subjects.find(s => s.id === subId);
+        document.getElementById('noteInput').value = sub.note || "";
+        document.getElementById('noteModal').classList.add('open');
+        setTimeout(() => document.getElementById('noteInput').focus(), 100);
+    }
+
+    function saveCurrentNote() {
+        if (activeNoteSemId && activeNoteSubId) {
+            const sub = semesters.find(s => s.id === activeNoteSemId).subjects.find(s => s.id === activeNoteSubId);
+            sub.note = document.getElementById('noteInput').value;
+            render(); saveToLocal(); closeNoteModal();
+        }
+    }
+
+    function closeNoteModal() {
+        document.getElementById('noteModal').classList.remove('open');
+        activeNoteSemId = null; activeNoteSubId = null;
+    }
 
     function openTuitionModal(semId) {
         currentTuitionSemId = semId;
@@ -757,18 +1061,22 @@
     }
 
     function closeTuitionModal() { document.getElementById('tuitionModal').classList.remove('open'); currentTuitionSemId = null; }
-    function addSemester() { semesters.push({ id: genId(), name: 'Kỳ mới', subjects: [] }); render(); }
-    function openDeleteModal(id) { showConfirm("Xác nhận xóa", "Bạn có chắc chắn muốn xóa toàn bộ học kỳ này?", () => { semesters = semesters.filter(s => s.id !== id); render(); }); }
-    function updateSem(id, val) { semesters.find(s=>s.id===id).name = val; }
-    function addSub(semId) { semesters.find(s=>s.id===semId).subjects.push({ id: genId(), name: 'Môn mới', tc: 3, type: 'new', score10: null }); render(); }
-    function delSub(semId, subId) { const sem = semesters.find(s=>s.id===semId); sem.subjects = sem.subjects.filter(s=>s.id!==subId); render(); }
+    function addSemester() { semesters.push({ id: genId(), name: 'Kỳ mới', subjects: [], isVisible: true }); render(); saveToLocal(); }
+    function openDeleteModal(id) { showConfirm("Xác nhận xóa", "Bạn có chắc chắn muốn xóa toàn bộ học kỳ này?", () => { semesters = semesters.filter(s => s.id !== id); render(); saveToLocal(); }); }
+    function updateSem(id, val) { semesters.find(s=>s.id===id).name = val; saveToLocal(); }
+    function addSub(semId) { semesters.find(s=>s.id===semId).subjects.push({ id: genId(), name: 'Môn mới', tc: 3, type: 'new', score10: null, note: "" }); render(); saveToLocal(); }
+    function delSub(semId, subId) { const sem = semesters.find(s=>s.id===semId); sem.subjects = sem.subjects.filter(s=>s.id!==subId); render(); saveToLocal(); }
+    
     function upd(semId, subId, field, val) {
         const sub = semesters.find(s=>s.id===semId).subjects.find(s=>s.id===subId);
         if(['name','type'].includes(field)) sub[field] = val;
         else if(field === 'tc') sub.tc = parseInt(val) || 0;
         else if(field === 'score10') sub.score10 = val===''?null:parseFloat(val);
+        else if(field === 'letter') {
+            switch(val) { case 'A': sub.score10=8.5; break; case 'B': sub.score10=7.0; break; case 'C': sub.score10=5.5; break; case 'D': sub.score10=4.0; break; case 'F': sub.score10=0.0; break; default: sub.score10=null; }
+        }
         else { sub[field] = val; autoCalcScore(sub); }
-        render();
+        render(); saveToLocal();
     }
 
     function showScriptModal() { document.getElementById('scriptModal').classList.add('open'); }
@@ -778,49 +1086,358 @@
         navigator.clipboard.writeText(code).then(() => { showMessage("Thành công", "Đã copy script vào bộ nhớ tạm!", "success"); }, () => { showMessage("Lỗi", "Copy thất bại, vui lòng copy thủ công.", "error"); });
     }
 
-    function showSuggestions() { document.getElementById('suggestionModal').classList.add('open'); renderSuggestionContent(); }
-    function closeSuggestions() { document.getElementById('suggestionModal').classList.remove('open'); }
-    
-    // --- HÀM JUMPTO ĐÃ SỬA ---
     function jumpTo(id) {
         closeSuggestions();
         const row = document.getElementById('row-' + id);
         if(row) {
             row.scrollIntoView({ behavior: 'smooth', block: 'center' });
             row.classList.remove('highlight-row');
-            void row.offsetWidth; // Reset animation
+            void row.offsetWidth; 
             row.classList.add('highlight-row');
             setTimeout(() => {
                 const input = document.getElementById('score-' + id);
-                if(input) {
-                    input.focus();
-                    input.select();
-                }
+                if(input) { input.focus(); input.select(); }
             }, 300);
         }
     }
 
-    function renderSuggestionContent() {
-        const stats = calculate(); const target = parseFloat(document.getElementById('targetGPA').value) || 3.2;
-        const deficit = (target * stats.tc) - (stats.gpa4 * stats.tc);
-        const container = document.getElementById('suggestion-list'); const statusDiv = document.getElementById('target-status');
+    function showSuggestions(semId = null) {
+        suggestionModeSemId = semId;
+        const modalTitle = document.getElementById('suggestionTitle');
+        modalTitle.textContent = semId ? `Gợi ý cải thiện: ${semesters.find(s=>s.id===semId).name}` : "Gợi ý cải thiện (Toàn bộ)";
+        document.getElementById('suggestionModal').classList.add('open');
+        switchTab(1); 
+    }
+    
+    function closeSuggestions() { document.getElementById('suggestionModal').classList.remove('open'); }
 
-        if (deficit <= 0) {
+    function switchTab(tabIndex) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        document.getElementById('tab-btn-' + tabIndex).classList.add('active');
+        document.getElementById('tab-content-' + tabIndex).classList.add('active');
+        runSuggestionLogic(tabIndex);
+    }
+
+    function runSuggestionLogic(forceTab = null) {
+        let activeTab = forceTab || 4; 
+        if (!forceTab) {
+            if(document.getElementById('tab-btn-1').classList.contains('active')) activeTab = 1;
+            else if(document.getElementById('tab-btn-2').classList.contains('active')) activeTab = 2;
+            else if(document.getElementById('tab-btn-3').classList.contains('active')) activeTab = 3;
+        }
+
+        const target = parseFloat(document.getElementById('targetGPA').value) || 3.2;
+        const statusDiv = document.getElementById('target-status');
+        const container = document.getElementById('tab-content-' + activeTab);
+
+        let stats;
+        if (suggestionModeSemId) {
+            const sem = semesters.find(s => s.id === suggestionModeSemId);
+            const semStats = calculateSemStats(sem);
+            stats = {
+                gpa4: parseFloat(semStats.gpa4), tc: semStats.totalTC,
+                list: sem.subjects.map(sub => ({ ...sub, letter: scoreToLetter(sub.score10), s4: letterTo4(scoreToLetter(sub.score10)), semName: sem.name, semId: sem.id }))
+            };
+        } else {
+            stats = calculate();
+        }
+
+        if (!stats.list || stats.list.length === 0 || stats.tc === 0) {
+            statusDiv.innerHTML = `<span style="color:#64748b">Chưa có dữ liệu</span>`;
+            container.innerHTML = `<div style="text-align:center; padding:30px; color:#94a3b8">Vui lòng nhập dữ liệu điểm trước.</div>`;
+            return;
+        }
+
+        const currentPoints = stats.gpa4 * stats.tc;
+        const targetPoints = target * stats.tc;
+        let deficit = targetPoints - currentPoints;
+
+        if (deficit <= 0.01) {
             statusDiv.innerHTML = `<span style="color:var(--grade-A)">Đã đạt mục tiêu!</span>`;
-            container.innerHTML = `<div style="text-align:center; padding:30px; color:var(--grade-A); font-weight:600">Xuất sắc! Bạn đã đạt GPA mục tiêu.</div>`; return;
+            container.innerHTML = `<div class="celebration-bg" style="text-align:center; padding:50px 20px; color:var(--grade-A); font-weight:700; font-size:1.2rem; border-radius:8px; border:1px solid #bbf7d0;">
+                Chúc mừng! Bạn đã đạt GPA mục tiêu!
+            </div>`;
+            return;
         }
-        statusDiv.innerHTML = `<span style="color:var(--grade-F)">Thiếu <b>${deficit.toFixed(2)}</b> điểm hệ 4</span>`;
-        let candidates = stats.list.filter(s => s.s4 < 4).map(s => ({ ...s, gain: (4 - s.s4) * s.tc })).sort((a, b) => b.gain - a.gain);
-        
+        statusDiv.innerHTML = `<span style="color:var(--grade-F)">Thiếu <b>${deficit.toFixed(2)}</b> điểm tích lũy</span>`;
+
         let html = '';
-        if(candidates.length === 0) { html = `<div style="padding:10px; text-align:center">Không còn môn nào khả thi để cải thiện.</div>`; } 
-        else {
-            candidates.slice(0, 8).forEach(s => {
-                html += `<div style="padding:12px; border-bottom:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center"><div><div style="font-weight:600; color:var(--text)">${s.name} <span style="font-weight:normal; font-size:0.9em; color:#64748b">(${s.tc} TC)</span></div><div style="font-size:0.8rem; color:#64748b">Hiện tại: <b class="g-${s.letter}">${s.letter}</b> (${s.semName})</div></div><div style="display:flex; align-items:center; gap:15px"><div style="color:var(--grade-A); font-size:0.9rem; font-weight:600">+ ${s.gain.toFixed(2)}</div><button onclick="jumpTo('${s.id}')" style="background:white; border:1px solid var(--primary); color:var(--primary); padding:4px 10px; border-radius:4px; font-size:12px; cursor:pointer;">Sửa</button></div></div>`;
-            });
+        let capacity = "Chưa xác định";
+        let capacityColor = "#64748b";
+        let assessmentText = "";
+        
+        if (stats.tc === 0 || stats.gpa4 === 0) { // Check if GPA is 0
+             capacity = "Chưa có dữ liệu";
+             assessmentText = "Vui lòng nhập đầy đủ điểm các môn để có đánh giá chính xác.";
+        } else {
+            if(stats.gpa4 >= 3.6) { capacity = "Xuất sắc"; capacityColor = "#22c55e"; }
+            else if(stats.gpa4 >= 3.2) { capacity = "Giỏi"; capacityColor = "#22c55e"; }
+            else if(stats.gpa4 >= 2.5) { capacity = "Khá"; capacityColor = "#0ea5e9"; }
+            else if(stats.gpa4 >= 2.0) { capacity = "Trung bình"; capacityColor = "#f59e0b"; }
+            else { capacity = "Yếu"; capacityColor = "#ef4444"; }
+            
+            assessmentText = `GPA hiện tại: <b>${stats.gpa4.toFixed(2)}</b>. Mục tiêu: <b>${target.toFixed(2)}</b>. ${deficit > 0 ? `Cần thêm <b>${deficit.toFixed(2)}</b> điểm quy đổi.` : "Đã hoàn thành."}`;
         }
+
+        html += `
+        <div class="assessment-card">
+            <div class="assess-title">
+                Đánh giá năng lực hiện tại
+                <span style="background:${capacityColor}; color:white; padding:1px 6px; border-radius:10px; font-size:0.75rem;">${capacity}</span>
+            </div>
+            <div class="assess-desc">${assessmentText}</div>
+        </div>
+        `;
+
+        if (activeTab === 1) html += algoMaxA(stats, deficit);
+        else if (activeTab === 2) html += algoMaxB(stats, deficit);
+        else if (activeTab === 3) html += algoCombinationsExtended(stats, deficit); 
+        else html += algoPerformance(stats, deficit); 
+
         container.innerHTML = html;
     }
+
+    function generateCompactList(list, title) {
+        let items = '';
+        list.forEach(s => {
+            let target = s.targetLetter;
+            let targetClass = target === 'A' ? 'g-A' : (target === 'B' ? 'g-B' : (target === 'C' ? 'g-C' : 'g-D'));
+            
+            items += `<li class="suggestion-item">
+                <div class="sub-name-group">
+                    <span class="sub-name">${s.name} <span style="font-weight:normal; color:#64748b; font-size:0.8em">(${s.tc} TC)</span></span>
+                    <div class="sub-meta">
+                        <span><b class="g-${s.letter}">${s.letter}</b></span>
+                        <span class="arrow-icon">➜</span>
+                        <span><b class="${targetClass}">${target}</b></span>
+                    </div>
+                </div>
+                <button class="btn-edit-small" onclick="jumpTo('${s.id}')">Sửa</button>
+            </li>`;
+        });
+
+        return `
+        <div style="margin-bottom:10px;">
+            <div style="font-weight:600; color:#0f172a; font-size:0.8rem; margin-bottom:5px;">${title}</div>
+            <div style="background:white; border:1px solid #e2e8f0; border-radius:6px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
+                <ul class="suggestion-list">${items}</ul>
+            </div>
+        </div>`;
+    }
+
+    function generateRichList(list, acc, deficit, title) {
+        let items = '';
+        let percentage = Math.min(100, Math.round((acc / deficit) * 100));
+        
+        list.forEach(s => {
+            let target = s.targetLetter;
+            let targetClass = target === 'A' ? 'g-A' : (target === 'B' ? 'g-B' : (target === 'C' ? 'g-C' : 'g-D'));
+            
+            let diffBadge = '';
+            let s4 = s.s4 || letterTo4(s.letter);
+            let t4 = s.targetScore;
+            if(t4 - s4 <= 1) diffBadge = `<span class="badge badge-easy">Dễ</span>`;
+            else if(t4 - s4 <= 2) diffBadge = `<span class="badge badge-med">TB</span>`;
+            else diffBadge = `<span class="badge badge-hard">Khó</span>`;
+
+            let s10 = parseFloat(s.score10) || (s.letter === 'A' ? 8.5 : (s.letter === 'B' ? 7.0 : (s.letter === 'C' ? 5.5 : 4.0)));
+            let t10 = (target === 'A' ? 8.5 : (target === 'B' ? 7.0 : (target === 'C' ? 5.5 : 4.0)));
+            let diff10 = (t10 - s10).toFixed(1);
+            if(diff10 <= 0) diff10 = "+0.5"; 
+
+            items += `<li class="suggestion-item">
+                <div class="sub-name-group">
+                    <span class="sub-name">${s.name} <span style="font-weight:normal; color:#64748b; font-size:0.85em">(${s.tc} TC)</span></span>
+                    <div class="sub-meta">
+                        <span>Hiện: <b class="g-${s.letter}">${s.letter}</b></span>
+                        <span class="arrow-icon">➜</span>
+                        <span>Mục tiêu: <b class="${targetClass}">${target}</b></span>
+                    </div>
+                    <div class="sub-details">He10: ${s10} ➜ ${t10} (+${diff10})</div>
+                </div>
+                <div style="text-align:right; display:flex; flex-direction:column; gap:3px; align-items:flex-end;">
+                    ${diffBadge}
+                    <div class="change-box">+${s.gain.toFixed(2)}</div>
+                    <button class="btn-edit-small" onclick="jumpTo('${s.id}')">Sửa</button>
+                </div>
+            </li>`;
+        });
+
+        let footerMsg = "";
+        if (acc < deficit) {
+            footerMsg = `<div style="padding:8px; text-align:center; color:#ef4444; font-weight:500; font-size:0.75rem; background:#fef2f2; border-top:1px solid #fee2e2;">
+                Chỉ đáp ứng <b>${percentage}%</b> mục tiêu.
+            </div>`;
+        } else {
+            footerMsg = `<div style="padding:8px; text-align:center; color:#166534; font-weight:500; font-size:0.75rem; background:#dcfce7; border-top:1px solid #bbf7d0;">
+                Đạt 100% mục tiêu.
+            </div>`;
+        }
+
+        return `
+        <div style="margin-bottom:15px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-weight:600; color:#0f172a; font-size:0.85rem;">
+                <span>${title}</span>
+                <span>${percentage}%</span>
+            </div>
+        </div>
+        <div style="background:white; border:1px solid #e2e8f0; border-radius:8px; overflow:hidden; box-shadow:0 2px 5px rgba(0,0,0,0.03);">
+            <ul class="suggestion-list">${items}</ul>
+            ${footerMsg}
+        </div>`;
+    }
+
+    function algoMaxA(stats, deficit) {
+        let candidates = stats.list.filter(s => s.s4 < 4.0).map(s => ({ ...s, gain: (4.0 - s.s4) * s.tc, targetScore: 4.0, targetLetter: 'A' })).sort((a, b) => b.gain - a.gain);
+        let selected = []; let acc = 0;
+        for (let s of candidates) {
+            selected.push(s); acc += s.gain;
+            if (acc >= deficit) break;
+        }
+        return generateRichList(selected, acc, deficit, "Chiến thuật: Đánh nhanh (Lên A)");
+    }
+
+    function algoMaxB(stats, deficit) {
+        let candidatesB = stats.list.filter(s => s.s4 < 3.0).map(s => ({ ...s, gain: (3.0 - s.s4) * s.tc, targetScore: 3.0, targetLetter: 'B' }));
+        candidatesB.sort((a,b) => b.gain - a.gain);
+        
+        let selected = []; let acc = 0;
+        for(let s of candidatesB) {
+            selected.push(s); acc += s.gain;
+            if(acc >= deficit) break;
+        }
+        return generateRichList(selected, acc, deficit, "Chiến thuật: An toàn (Lên B)");
+    }
+
+    function algoCombinationsExtended(stats, deficit) {
+        let html = `<div style="padding:10px; color:#64748b; font-size:12px; font-style:italic">6 kịch bản tùy chọn:</div>`;
+        let available = stats.list.filter(s => s.s4 < 4.0);
+
+        const simulate = (filterFn, targetLogic) => {
+            let pool = available.filter(filterFn);
+            let sel = []; let acc = 0;
+            for(let s of pool) {
+                let t = targetLogic(s);
+                let gain = (t.score - s.s4) * s.tc;
+                if(gain > 0) {
+                    sel.push({...s, targetScore: t.score, targetLetter: t.letter, gain: gain});
+                    acc += gain;
+                    if(acc >= deficit) break;
+                }
+            }
+            return { list: sel, acc: acc };
+        };
+
+        let s1 = simulate(() => true, () => ({score: 4.0, letter: 'A'}));
+        s1.list.sort((a,b) => b.gain - a.gain); 
+        if(s1.list.length) html += generateCompactList(s1.list, "1. Tốc chiến (Chỉ lên A)");
+
+        let s2 = simulate(s => s.s4 < 3.0, () => ({score: 3.0, letter: 'B'}));
+        if(s2.list.length) html += generateCompactList(s2.list, "2. An toàn (Chỉ lên B)");
+
+        let s3 = JSON.parse(JSON.stringify(available)).sort((a,b) => b.tc - a.tc);
+        let sel3 = [], acc3 = 0;
+        for(let s of s3) {
+            let gain = (4.0 - s.s4)*s.tc; 
+            sel3.push({...s, targetLetter:'A'}); acc3+=gain; 
+            if(acc3 >= deficit) break;
+        }
+        if(sel3.length) html += generateCompactList(sel3, "3. Ưu tiên tín chỉ cao (Lên A)");
+
+        let s4 = JSON.parse(JSON.stringify(available)).sort((a,b) => a.s4 - b.s4);
+        let sel4 = [], acc4 = 0;
+        for(let s of s4) {
+            let gain = (4.0 - s.s4)*s.tc; 
+            sel4.push({...s, targetLetter:'A'}); acc4+=gain; 
+            if(acc4 >= deficit) break;
+        }
+        if(sel4.length) html += generateCompactList(sel4, "4. Ưu tiên môn điểm thấp nhất");
+
+        let s5 = JSON.parse(JSON.stringify(available)).sort((a,b) => a.s4 - b.s4);
+        let sel5 = [], acc5 = 0;
+        for(let s of s5) {
+            if(s.s4 < 3.0) {
+                let gain = (3.0 - s.s4)*s.tc; 
+                if(acc5 + gain >= deficit) { sel5.push({...s, targetLetter:'B'}); acc5+=gain; break; }
+            }
+            let gainA = (4.0 - s.s4)*s.tc;
+            sel5.push({...s, targetLetter:'A'}); acc5+=gainA;
+            if(acc5 >= deficit) break;
+        }
+        if(sel5.length) html += generateCompactList(sel5, "5. Cân bằng (Hỗn hợp A & B)");
+
+        let s6 = available.filter(s => s.s4 < 3.0).sort((a,b) => a.s4 - b.s4);
+        let sel6 = [], acc6 = 0;
+        for(let s of s6) {
+            let target = s.s4 < 2.0 ? {s:2.0, l:'C'} : {s:3.0, l:'B'};
+            let gain = (target.s - s.s4)*s.tc;
+            sel6.push({...s, targetLetter: target.l}); acc6+=gain;
+            if(acc6 >= deficit) break;
+        }
+        if(sel6.length && acc6 >= deficit) html += generateCompactList(sel6, "6. Leo thang (Từng bước nhỏ)");
+
+        return html;
+    }
+
+    function algoPerformance(stats, deficit) {
+        let subjects = stats.list.map(s => ({...s, currentS4: s.s4, targetS4: s.s4, targetLetter: s.letter}));
+        let acc = 0;
+        
+        while (acc < deficit) {
+            let bestCandidate = null;
+            let minDifficulty = 999;
+
+            for(let s of subjects) {
+                if(s.targetS4 >= 4.0) continue; 
+                let nextScore, nextLetter, difficulty;
+                if (s.targetS4 < 1.0) { nextScore = 1.0; nextLetter = 'D'; difficulty = 1; } 
+                else if (s.targetS4 < 2.0) { nextScore = 2.0; nextLetter = 'C'; difficulty = 2; } 
+                else if (s.targetS4 < 3.0) { nextScore = 3.0; nextLetter = 'B'; difficulty = 3; } 
+                else { nextScore = 4.0; nextLetter = 'A'; difficulty = 5; } 
+
+                if (difficulty < minDifficulty) {
+                    minDifficulty = difficulty;
+                    bestCandidate = { sub: s, nextScore, nextLetter, gain: (nextScore - s.targetS4) * s.tc };
+                } else if (difficulty === minDifficulty) {
+                     if (!bestCandidate || s.tc > bestCandidate.sub.tc) {
+                         bestCandidate = { sub: s, nextScore, nextLetter, gain: (nextScore - s.targetS4) * s.tc };
+                     }
+                }
+            }
+            if (!bestCandidate) break; 
+            bestCandidate.sub.targetS4 = bestCandidate.nextScore;
+            bestCandidate.sub.targetLetter = bestCandidate.nextLetter;
+            acc += bestCandidate.gain;
+        }
+
+        let changed = subjects.filter(s => s.targetS4 > s.s4).map(s => ({
+            id: s.id, name: s.name, tc: s.tc, letter: s.letter, targetLetter: s.targetLetter, targetScore: s.targetS4, s4: s.s4, gain: (s.targetS4 - s.s4)*s.tc, score10: s.score10
+        }));
+
+        return generateRichList(changed, acc, deficit, "Chiến thuật: Tối ưu Năng lực");
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+        const floatingBar = document.getElementById('floating-bar');
+        const footer = document.getElementById('main-footer');
+        const summary = document.getElementById('main-summary-bar');
+        
+        entries.forEach(entry => {
+            if (entry.target === footer) {
+                if (entry.isIntersecting) floatingBar.classList.remove('visible'); 
+                else if (summary.getBoundingClientRect().top < 0) floatingBar.classList.add('visible'); 
+            }
+            if (entry.target === summary) {
+                if (entry.isIntersecting) floatingBar.classList.remove('visible'); 
+                else if (!footer.getBoundingClientRect().top < window.innerHeight) floatingBar.classList.add('visible'); 
+            }
+        });
+    }, { threshold: 0 });
+
+    observer.observe(document.getElementById('main-summary-bar'));
+    observer.observe(document.getElementById('main-footer'));
+
 </script>
 </body>
 </html>
