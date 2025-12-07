@@ -150,6 +150,7 @@
             outline: 2px solid var(--primary); background: white; z-index: 10; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
+        /* --- STYLES FOR NOTE & TOOLTIP --- */
         .btn-note {
             background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;
             transition: 0.2s; position: relative;
@@ -157,19 +158,32 @@
         .btn-note svg { width: 18px; height: 18px; fill: #94a3b8; } 
         .btn-note:hover svg { fill: var(--primary); }
         .btn-note.has-note svg { fill: #f59e0b; } 
-        
-        /* Note Tooltip */
-        .btn-note:hover::after {
-            content: attr(data-tooltip);
-            position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
-            background: #334155; color: white; padding: 6px 12px; border-radius: 4px;
-            font-size: 12px; white-space: pre-wrap; z-index: 100; pointer-events: none;
-            opacity: 0; transition: 0.2s; visibility: hidden; max-width: 200px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+
+		#custom-tooltip {
+            position: fixed;
+            
+            /* --- SỬA ĐOẠN MÀU NỀN TẠI ĐÂY --- */
+            background: rgba(14, 165, 233, 0.85); /* Màu xanh (Primary) với độ trong suốt 85% */
+            backdrop-filter: blur(8px);            /* Hiệu ứng làm mờ nền phía sau (Glass) */
+            color: #ffffff;                        /* Chữ màu trắng cho nổi bật */
+            border: 1px solid rgba(255, 255, 255, 0.4); /* Viền kính sáng nhẹ */
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);  /* Bóng đổ mềm mại hơn */
+            /* -------------------------------- */
+
+            padding: 10px 15px;
+            border-radius: 8px; /* Bo tròn mềm hơn chút */
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 12.5px;
+            line-height: 1.5;
+            z-index: 9999;
+            display: none;
+            max-width: 350px;
+            width: max-content;
+            white-space: pre-wrap;
+            pointer-events: none;
+            animation: tooltipFadeIn 0.2s ease-out;
         }
-        .btn-note[data-tooltip]:not([data-tooltip=""]):hover::after {
-            opacity: 1; visibility: visible;
-        }
+        @keyframes tooltipFadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         @keyframes flashHighlight { 0% { background-color: #fde047; } 100% { background-color: transparent; } }
         .highlight-row { animation: flashHighlight 2s ease-out; }
@@ -247,7 +261,7 @@
         
         .suggestion-list { list-style: none; padding: 0; margin: 0; }
         .suggestion-item {
-            padding: 8px 10px; /* Reduced padding */
+            padding: 8px 10px;
             border-bottom: 1px solid #f1f5f9;
             display: flex; justify-content: space-between; align-items: center;
             font-size: 12px; 
@@ -256,6 +270,24 @@
         .suggestion-item:hover { background: #f8fafc; }
         .suggestion-item:last-child { border-bottom: none; }
         
+        /* New Style for Scenario Separation */
+        .scenario-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .scenario-header {
+            background: #f1f5f9;
+            padding: 8px 12px;
+            font-weight: 600;
+            color: #334155;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
         .sub-name-group { flex-grow: 1; margin-right: 10px; }
         .sub-name { font-weight: 600; color: var(--text); display: block; margin-bottom: 1px; font-size: 0.85rem; }
         .sub-meta { font-size: 0.75rem; color: #64748b; display: flex; gap: 8px; align-items: center; }
@@ -355,11 +387,19 @@
             .tab-btn { flex: 1 1 40%; text-align: center; }
             .suggestion-item { flex-direction: row; align-items: center; } 
             
-            /* FIX MOBILE DROPDOWN OVERFLOW */
-            .dropdown-menu { 
-                right: 0; left: auto; /* Align right to prevent overflow */
-                min-width: 220px; 
-                transform-origin: top right;
+            /* FIX MOBILE DROPDOWN - Center Popup Style */
+            .dropdown-menu.show {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 85%;
+                max-width: 300px;
+                right: auto;
+                z-index: 1001;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+                max-height: 80vh;
+                overflow-y: auto;
             }
         }
     </style>
@@ -639,6 +679,8 @@
     </div>
 </div>
 
+<div id="custom-tooltip"></div>
+
 <script>
     let semesters = [];
     let studentInfo = null; 
@@ -881,7 +923,11 @@
             emptyState.className = 'empty-state';
             emptyState.id = 'empty-state-zone';
             emptyState.innerHTML = `
-                <div style="font-size:2rem; margin-bottom:10px;">📂</div>
+                <div style="margin-bottom:10px;">
+					<svg viewBox="0 0 24 24" style="width: 48px; height: 48px; fill: #64748b;">
+						<path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/>
+					</svg>
+				</div>
                 <div style="font-weight:600; font-size:1.1rem; color:var(--text)">Chưa có dữ liệu</div>
                 <div style="margin-top:5px; font-size:0.9rem">Kéo thả file JSON vào đây hoặc chọn <a href="#" onclick="document.getElementById('jsonInput').click(); return false;" style="color:var(--primary)">Mở File JSON</a></div>
                 <div style="margin-top:15px">hoặc</div>
@@ -1139,11 +1185,21 @@
                 gpa4: parseFloat(semStats.gpa4), tc: semStats.totalTC,
                 list: sem.subjects.map(sub => ({ ...sub, letter: scoreToLetter(sub.score10), s4: letterTo4(scoreToLetter(sub.score10)), semName: sem.name, semId: sem.id }))
             };
+            // Add count for single semester mode
+            stats.count = sem.subjects.filter(sub => sub.score10 !== null && sub.score10 !== "" && sub.tc > 0).length;
         } else {
             stats = calculate();
         }
 
-        if (!stats.list || stats.list.length === 0 || stats.tc === 0) {
+        // --- UPDATED LOGIC FOR EMPTY VS F ---
+        // If list is empty or count is 0, we check if it is really empty or just Fs. 
+        // calculate() returns count of subjects with valid score. If scores are 0 (F), they are counted.
+        // If stats.list is empty, it means no subjects.
+        if (!stats.list || stats.count === 0) {
+            // Further check: Do we have subjects but all are invalid? 
+            // In calculate(), we filter: if (sub.score10 !== null && sub.score10 !== "" && sub.tc > 0)
+            // If user enters F (0.0), it IS valid. So stats.count will be > 0.
+            // If stats.count == 0, it means truly NO DATA entered.
             statusDiv.innerHTML = `<span style="color:#64748b">Chưa có dữ liệu</span>`;
             container.innerHTML = `<div style="text-align:center; padding:30px; color:#94a3b8">Vui lòng nhập dữ liệu điểm trước.</div>`;
             return;
@@ -1167,18 +1223,14 @@
         let capacityColor = "#64748b";
         let assessmentText = "";
         
-        if (stats.tc === 0 || stats.gpa4 === 0) { // Check if GPA is 0
-             capacity = "Chưa có dữ liệu";
-             assessmentText = "Vui lòng nhập đầy đủ điểm các môn để có đánh giá chính xác.";
-        } else {
-            if(stats.gpa4 >= 3.6) { capacity = "Xuất sắc"; capacityColor = "#22c55e"; }
-            else if(stats.gpa4 >= 3.2) { capacity = "Giỏi"; capacityColor = "#22c55e"; }
-            else if(stats.gpa4 >= 2.5) { capacity = "Khá"; capacityColor = "#0ea5e9"; }
-            else if(stats.gpa4 >= 2.0) { capacity = "Trung bình"; capacityColor = "#f59e0b"; }
-            else { capacity = "Yếu"; capacityColor = "#ef4444"; }
-            
-            assessmentText = `GPA hiện tại: <b>${stats.gpa4.toFixed(2)}</b>. Mục tiêu: <b>${target.toFixed(2)}</b>. ${deficit > 0 ? `Cần thêm <b>${deficit.toFixed(2)}</b> điểm quy đổi.` : "Đã hoàn thành."}`;
-        }
+        // Ensure even if GPA is 0 (but count > 0), we process capacity
+        if(stats.gpa4 >= 3.6) { capacity = "Xuất sắc"; capacityColor = "#22c55e"; }
+        else if(stats.gpa4 >= 3.2) { capacity = "Giỏi"; capacityColor = "#22c55e"; }
+        else if(stats.gpa4 >= 2.5) { capacity = "Khá"; capacityColor = "#0ea5e9"; }
+        else if(stats.gpa4 >= 2.0) { capacity = "Trung bình"; capacityColor = "#f59e0b"; }
+        else { capacity = "Yếu"; capacityColor = "#ef4444"; }
+        
+        assessmentText = `GPA hiện tại: <b>${stats.gpa4.toFixed(2)}</b>. Mục tiêu: <b>${target.toFixed(2)}</b>. ${deficit > 0 ? `Cần thêm <b>${deficit.toFixed(2)}</b> điểm quy đổi.` : "Đã hoàn thành."}`;
 
         html += `
         <div class="assessment-card">
@@ -1217,12 +1269,11 @@
             </li>`;
         });
 
+        // --- UPDATED UI FOR SCENARIOS ---
         return `
-        <div style="margin-bottom:10px;">
-            <div style="font-weight:600; color:#0f172a; font-size:0.8rem; margin-bottom:5px;">${title}</div>
-            <div style="background:white; border:1px solid #e2e8f0; border-radius:6px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,0.02);">
-                <ul class="suggestion-list">${items}</ul>
-            </div>
+        <div class="scenario-card">
+            <div class="scenario-header">${title}</div>
+            <ul class="suggestion-list">${items}</ul>
         </div>`;
     }
 
@@ -1437,6 +1488,59 @@
 
     observer.observe(document.getElementById('main-summary-bar'));
     observer.observe(document.getElementById('main-footer'));
+
+    // --- LOGIC XỬ LÝ TOOLTIP THÔNG MINH ---
+    const tooltipEl = document.getElementById('custom-tooltip');
+    
+    // Sử dụng Event Delegation để bắt sự kiện cho cả các nút được tạo động sau này
+    document.addEventListener('mouseover', function(e) {
+        const btn = e.target.closest('.btn-note');
+        if (!btn) {
+            // Nếu chuột rời khỏi nút note thì ẩn tooltip
+            if(tooltipEl.style.display === 'block') {
+                tooltipEl.style.display = 'none';
+            }
+            return;
+        }
+
+        const noteContent = btn.getAttribute('data-tooltip');
+        // Nếu không có ghi chú hoặc ghi chú rỗng thì không hiện
+        if (!noteContent || noteContent.trim() === "" || noteContent === "Ghi chú") return;
+
+        // Gán nội dung
+        tooltipEl.textContent = noteContent;
+        tooltipEl.style.display = 'block';
+
+        // Tính toán vị trí thông minh (Responsive Position)
+        const btnRect = btn.getBoundingClientRect();
+        const tooltipRect = tooltipEl.getBoundingClientRect();
+        
+        // Mặc định hiện bên phải nút
+        let top = btnRect.top + (btnRect.height / 2) - (tooltipRect.height / 2);
+        let left = btnRect.right + 10;
+
+        // 1. Kiểm tra tràn dưới màn hình
+        if (top + tooltipRect.height > window.innerHeight - 10) {
+            top = window.innerHeight - tooltipRect.height - 10;
+        }
+        // 2. Kiểm tra tràn trên màn hình
+        if (top < 10) {
+            top = 10;
+        }
+        
+        // 3. Kiểm tra tràn phải màn hình (nếu sát lề phải quá thì hiện sang trái)
+        if (left + tooltipRect.width > window.innerWidth - 10) {
+            left = btnRect.left - tooltipRect.width - 10; // Đẩy sang trái
+        }
+
+        tooltipEl.style.top = top + 'px';
+        tooltipEl.style.left = left + 'px';
+    });
+
+    // Ẩn khi scroll để tránh tooltip trôi lung tung
+    window.addEventListener('scroll', () => {
+        tooltipEl.style.display = 'none';
+    }, true);
 
 </script>
 </body>
