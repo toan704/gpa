@@ -161,17 +161,14 @@
 
 		#custom-tooltip {
             position: fixed;
-            
-            /* --- SỬA ĐOẠN MÀU NỀN TẠI ĐÂY --- */
-            background: rgba(14, 165, 233, 0.85); /* Màu xanh (Primary) với độ trong suốt 85% */
-            backdrop-filter: blur(8px);            /* Hiệu ứng làm mờ nền phía sau (Glass) */
-            color: #ffffff;                        /* Chữ màu trắng cho nổi bật */
-            border: 1px solid rgba(255, 255, 255, 0.4); /* Viền kính sáng nhẹ */
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);  /* Bóng đổ mềm mại hơn */
-            /* -------------------------------- */
+            background: rgba(14, 165, 233, 0.85); 
+            backdrop-filter: blur(8px);            
+            color: #ffffff;                        
+            border: 1px solid rgba(255, 255, 255, 0.4); 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);  
 
             padding: 10px 15px;
-            border-radius: 8px; /* Bo tròn mềm hơn chút */
+            border-radius: 8px; 
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             font-size: 12.5px;
             line-height: 1.5;
@@ -408,6 +405,12 @@
                     Tùy chọn
                 </button>
                 <div id="menu-file-options" class="dropdown-menu">
+                    <div class="dropdown-item dropdown-item-check" onclick="toggleAutoCalc(event)">
+                        <span>Tự động tính điểm thành phần</span>
+                        <input type="checkbox" id="autoCalcToggle" checked onchange="toggleAutoCalc(event)">
+                    </div>
+                    <div class="dropdown-divider"></div>
+
                     <div class="dropdown-item" onclick="document.getElementById('jsonInput').click()">
                         <svg viewBox="0 0 24 24" style="fill:#64748b"><path d="M20 6h-8l-2-2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 12H4V8h16v10z"/></svg>
                         Mở File JSON
@@ -434,7 +437,7 @@
             </button>
 
             <button class="btn btn-primary" onclick="showSuggestions()">
-                <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 0 1 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg>
+                <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 0 1 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg>
                 Cải thiện
             </button>
         </div>
@@ -607,7 +610,7 @@
         <div style="background:#f1f5f9; padding:10px 15px; border-radius:8px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center">
             <div>
                 <label style="font-weight:600; margin-right:10px; font-size:0.9rem">Mục tiêu GPA (4.0):</label>
-                <input type="number" id="targetGPA" value="3.20" step="0.01" style="width:60px; font-weight:bold; background:white; border:1px solid #ccc; padding:4px; border-radius:4px" onchange="runSuggestionLogic()">
+                <input type="number" id="targetGPA" value="3.20" step="0.01" style="width:60px; font-weight:bold; background:white; border:1px solid #ccc; padding:4px; border-radius:4px" onchange="runSuggestionLogic(); saveToLocal();">
             </div>
             <div id="target-status" style="font-size:0.9rem; font-weight:600"></div>
         </div>
@@ -645,7 +648,7 @@
         <div style="margin-bottom:20px;">
             <label style="display:block; font-weight:600; margin-bottom:8px; color:#334155;">Nhập số tiền / 1 tín chỉ:</label>
             <div style="position:relative;">
-                <input type="number" id="tuitionPrice" value="500000" oninput="calculateTuition()" style="width:100%; padding:10px 10px 10px 35px; border:1px solid #cbd5e1; border-radius:6px; font-family:inherit; font-weight:500; font-size:1rem; box-sizing:border-box;">
+                <input type="number" id="tuitionPrice" value="500000" oninput="calculateTuition()" onchange="saveToLocal()" style="width:100%; padding:10px 10px 10px 35px; border:1px solid #cbd5e1; border-radius:6px; font-family:inherit; font-weight:500; font-size:1rem; box-sizing:border-box;">
                 <span style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#94a3b8;">₫</span>
             </div>
         </div>
@@ -681,6 +684,9 @@
     let activeNoteSubId = null;
     let lastGpaValue = null;
     let suggestionModeSemId = null;
+    
+    // Default enabled for auto calc
+    let isAutoCalcEnabled = true;
 
     const STORAGE_KEY = 'vku_gpa_data_local';
 
@@ -692,6 +698,20 @@
                 if (parsed.semesters) {
                     semesters = parsed.semesters;
                     studentInfo = parsed.studentInfo;
+                    
+                    // Load settings
+                    if (parsed.settings) {
+                        if (parsed.settings.isAutoCalcEnabled !== undefined) {
+                             isAutoCalcEnabled = parsed.settings.isAutoCalcEnabled;
+                        }
+                        if (parsed.settings.tuitionPrice !== undefined) {
+                            defaultTuitionPrice = parsed.settings.tuitionPrice;
+                        }
+                        if (parsed.settings.targetGPA !== undefined) {
+                            document.getElementById('targetGPA').value = parsed.settings.targetGPA;
+                        }
+                    }
+
                     if(studentInfo) updateTitle();
                 } else {
                     semesters = parsed; 
@@ -712,15 +732,39 @@
         } else {
             render();
         }
+
+        // Sync Checkbox state
+        const toggleEl = document.getElementById('autoCalcToggle');
+        if(toggleEl) toggleEl.checked = isAutoCalcEnabled;
     };
 
     function saveToLocal(showMsg = false) {
+        // Capture current target GPA
+        const currentTarget = document.getElementById('targetGPA') ? document.getElementById('targetGPA').value : "3.20";
+
         const dataToSave = {
             studentInfo: studentInfo,
-            semesters: semesters
+            semesters: semesters,
+            settings: {
+                isAutoCalcEnabled: isAutoCalcEnabled,
+                tuitionPrice: defaultTuitionPrice,
+                targetGPA: currentTarget
+            }
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
         if(showMsg) showMessage("Đã lưu", "Dữ liệu đã được lưu vào bộ nhớ trình duyệt.", "success");
+    }
+
+    function toggleAutoCalc(event) {
+        // Prevent clicking parent div from triggering twice if checkbox clicked directly
+        if (event.target.tagName !== 'INPUT') {
+             const checkbox = document.getElementById('autoCalcToggle');
+             checkbox.checked = !checkbox.checked;
+             isAutoCalcEnabled = checkbox.checked;
+        } else {
+             isAutoCalcEnabled = event.target.checked;
+        }
+        saveToLocal();
     }
 
     function updateTitle() {
@@ -898,9 +942,35 @@
     }
 
     function autoCalcScore(sub) {
-        const cc = parseFloat(sub.cc); const bt = parseFloat(sub.bt); const gk = parseFloat(sub.gk); const ck = parseFloat(sub.ck);
-        if (!isNaN(cc) && !isNaN(bt) && !isNaN(gk) && !isNaN(ck)) { sub.score10 = Math.round(((cc*0.1)+(bt*0.2)+(gk*0.2)+(ck*0.5))*10)/10; }
+        if (!isAutoCalcEnabled) return;
+
+        const cc = parseFloat(sub.cc); 
+        const bt = parseFloat(sub.bt); // Could be NaN
+        const gk = parseFloat(sub.gk); 
+        const ck = parseFloat(sub.ck);
+
+        // Basic requirement: CC, GK, CK must be valid numbers to calculate
+        if (!isNaN(cc) && !isNaN(gk) && !isNaN(ck)) { 
+            let score = 0;
+            // CHECK LOGIC:
+            // Case 1: Has BT -> 10% CC, 20% BT, 20% GK, 50% CK (1225)
+            // Case 2: No BT  -> 20% CC, 20% GK, 60% CK (226)
+            
+            if (!isNaN(bt)) {
+                // Has BT
+                score = (cc * 0.1) + (bt * 0.2) + (gk * 0.2) + (ck * 0.5);
+            } else {
+                // No BT (Empty or NaN)
+                score = (cc * 0.2) + (gk * 0.2) + (ck * 0.6);
+            }
+            
+            sub.score10 = Math.round(score * 10) / 10;
+            
+            // Auto update letter
+            sub.letter = scoreToLetter(sub.score10);
+        }
     }
+
     function scoreToLetter(s) { if(s===null||s==="")return""; s=parseFloat(s); if(s>=8.5)return'A'; if(s>=7.0)return'B'; if(s>=5.5)return'C'; if(s>=4.0)return'D'; return'F'; }
     function letterTo4(l) { return {'A':4,'B':3,'C':2,'D':1,'F':0}[l]??0; }
     function genId() { return Math.random().toString(36).substr(2, 9); }
@@ -967,7 +1037,7 @@
                                     Tính học phí
                                 </div>
                                 <div class="dropdown-item" onclick="showSuggestions('${sem.id}')">
-                                    <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 0 1 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 0 1 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg>
                                     Gợi ý cải thiện kỳ này
                                 </div>
                                 <div class="dropdown-item danger" onclick="openDeleteModal('${sem.id}')">
@@ -1088,7 +1158,8 @@
         if(!currentTuitionSemId) return;
         const sem = semesters.find(s => s.id === currentTuitionSemId);
         const price = parseInt(document.getElementById('tuitionPrice').value) || 0;
-        defaultTuitionPrice = price;
+        defaultTuitionPrice = price; // Update Global Variable
+        
         let totalTC = 0;
         sem.subjects.forEach(s => totalTC += (parseInt(s.tc) || 0));
         const totalTuition = totalTC * price;
@@ -1111,7 +1182,12 @@
         else if(field === 'letter') {
             switch(val) { case 'A': sub.score10=8.5; break; case 'B': sub.score10=7.0; break; case 'C': sub.score10=5.5; break; case 'D': sub.score10=4.0; break; case 'F': sub.score10=0.0; break; default: sub.score10=null; }
         }
-        else { sub[field] = val; autoCalcScore(sub); }
+        else { 
+            // Save value first
+            sub[field] = val; 
+            // Trigger auto calculation
+            autoCalcScore(sub); 
+        }
         render(); saveToLocal();
     }
 
@@ -1182,14 +1258,7 @@
         }
 
         // --- UPDATED LOGIC FOR EMPTY VS F ---
-        // If list is empty or count is 0, we check if it is really empty or just Fs. 
-        // calculate() returns count of subjects with valid score. If scores are 0 (F), they are counted.
-        // If stats.list is empty, it means no subjects.
         if (!stats.list || stats.count === 0) {
-            // Further check: Do we have subjects but all are invalid? 
-            // In calculate(), we filter: if (sub.score10 !== null && sub.score10 !== "" && sub.tc > 0)
-            // If user enters F (0.0), it IS valid. So stats.count will be > 0.
-            // If stats.count == 0, it means truly NO DATA entered.
             statusDiv.innerHTML = `<span style="color:#64748b">Chưa có dữ liệu</span>`;
             container.innerHTML = `<div style="text-align:center; padding:30px; color:#94a3b8">Vui lòng nhập dữ liệu điểm trước.</div>`;
             return;
@@ -1482,11 +1551,9 @@
     // --- LOGIC XỬ LÝ TOOLTIP THÔNG MINH ---
     const tooltipEl = document.getElementById('custom-tooltip');
     
-    // Sử dụng Event Delegation để bắt sự kiện cho cả các nút được tạo động sau này
     document.addEventListener('mouseover', function(e) {
         const btn = e.target.closest('.btn-note');
         if (!btn) {
-            // Nếu chuột rời khỏi nút note thì ẩn tooltip
             if(tooltipEl.style.display === 'block') {
                 tooltipEl.style.display = 'none';
             }
@@ -1494,40 +1561,32 @@
         }
 
         const noteContent = btn.getAttribute('data-tooltip');
-        // Nếu không có ghi chú hoặc ghi chú rỗng thì không hiện
         if (!noteContent || noteContent.trim() === "" || noteContent === "Ghi chú") return;
 
-        // Gán nội dung
         tooltipEl.textContent = noteContent;
         tooltipEl.style.display = 'block';
 
-        // Tính toán vị trí thông minh (Responsive Position)
         const btnRect = btn.getBoundingClientRect();
         const tooltipRect = tooltipEl.getBoundingClientRect();
         
-        // Mặc định hiện bên phải nút
         let top = btnRect.top + (btnRect.height / 2) - (tooltipRect.height / 2);
         let left = btnRect.right + 10;
 
-        // 1. Kiểm tra tràn dưới màn hình
         if (top + tooltipRect.height > window.innerHeight - 10) {
             top = window.innerHeight - tooltipRect.height - 10;
         }
-        // 2. Kiểm tra tràn trên màn hình
         if (top < 10) {
             top = 10;
         }
         
-        // 3. Kiểm tra tràn phải màn hình (nếu sát lề phải quá thì hiện sang trái)
         if (left + tooltipRect.width > window.innerWidth - 10) {
-            left = btnRect.left - tooltipRect.width - 10; // Đẩy sang trái
+            left = btnRect.left - tooltipRect.width - 10;
         }
 
         tooltipEl.style.top = top + 'px';
         tooltipEl.style.left = left + 'px';
     });
 
-    // Ẩn khi scroll để tránh tooltip trôi lung tung
     window.addEventListener('scroll', () => {
         tooltipEl.style.display = 'none';
     }, true);
